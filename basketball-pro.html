@@ -7,8 +7,8 @@
     <style>
       :root {
         --bg: #09111d;
-        --panel: rgba(13, 22, 35, 0.9);
-        --panel-2: rgba(21, 35, 55, 0.92);
+        --panel: rgba(13, 22, 35, 0.92);
+        --panel-alt: rgba(19, 32, 50, 0.9);
         --orange: #ffb703;
         --orange-2: #ff7b00;
         --cyan: #4cc9f0;
@@ -23,7 +23,7 @@
       html, body {
         margin: 0;
         height: 100%;
-        background: linear-gradient(135deg, #0b1220, #152a43 48%, #0d1727);
+        background: linear-gradient(135deg, #0c1524 0%, #132a46 50%, #0a1421 100%);
         color: var(--text);
         font-family: Inter, "Segoe UI", sans-serif;
       }
@@ -34,297 +34,91 @@
       }
 
       .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 14px 20px;
-        background: rgba(0, 0, 0, 0.26);
-        border-bottom: 1px solid var(--line);
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 16px 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--line);
       }
 
-      .brand {
-        font-weight: 900;
-        letter-spacing: 0.04em;
-        color: var(--orange);
-      }
-
-      .scoreboard {
-        display: flex;
-        gap: 30px;
-        font-weight: 700;
-      }
-
+      .brand { font-size: 1.6rem; font-weight: 900; color: var(--orange); }
+      .scoreboard { display: flex; gap: 24px; font-weight: 700; }
       .scoreboard b { color: var(--cyan); }
 
       .app {
-        display: grid;
-        grid-template-columns: 290px 1fr 300px;
-        gap: 12px;
-        padding: 12px;
-        flex: 1;
-        min-height: 0;
+        display: grid; grid-template-columns: 290px 1fr 300px; gap: 12px; padding: 12px; flex: 1; min-height: 0;
       }
 
       .panel {
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        box-shadow: 0 18px 50px rgba(0,0,0,0.25);
-        overflow: hidden;
+        background: var(--panel); border: 1px solid var(--line); border-radius: 20px;
+        overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,0.22);
       }
 
-      .roster-panel {
-        padding: 14px;
-      }
-
+      .roster-panel { padding: 14px; }
       .section-title {
-        margin: 0 0 12px;
-        font-size: 0.82rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--orange);
+        margin: 0 0 12px; font-size: 0.76rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange);
       }
 
-      .roster-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        max-height: 46vh;
-        overflow: auto;
-      }
-
+      .roster-list { display: flex; flex-direction: column; gap: 8px; max-height: 42vh; overflow: auto; }
       .player-card {
-        display: grid;
-        grid-template-columns: 36px 1fr auto;
-        gap: 10px;
-        align-items: center;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 8px 10px;
-        cursor: pointer;
+        display: grid; grid-template-columns: 38px 1fr auto; gap: 10px; align-items: center;
+        background: rgba(255,255,255,0.04); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; cursor: pointer; transition: 0.15s ease;
       }
-
-      .player-card.active {
-        border-color: rgba(255,183,3,0.7);
-        background: rgba(255,183,3,0.12);
-      }
-
+      .player-card:hover { transform: translateY(-1px); }
+      .player-card.active { background: rgba(255,183,3,0.12); border-color: rgba(255,183,3,0.7); }
       .avatar {
-        width: 34px;
-        height: 34px;
-        display: grid;
-        place-items: center;
-        border-radius: 10px;
-        background: linear-gradient(135deg, #dfe9ff, #80d8ff);
-        color: #11213d;
-        font-weight: 900;
-        font-size: 0.72rem;
+        width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-weight: 900; font-size: 0.72rem; color: #0d1d36; background: linear-gradient(135deg, #dfe9ff, #77d5ff);
       }
+      .name-box { display: flex; flex-direction: column; gap: 2px; }
+      .name-box strong { font-size: 0.8rem; }
+      .name-box small { color: var(--muted); font-size: 0.72rem; }
+      .rating { font-size: 0.84rem; font-weight: 800; color: var(--orange); }
 
-      .name-box {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .name-box strong {
-        font-size: 0.8rem;
-      }
-
-      .name-box small {
-        color: var(--muted);
-        font-size: 0.72rem;
-      }
-
-      .rating {
-        font-size: 0.86rem;
-        font-weight: 800;
-        color: var(--orange);
-      }
-
-      .court-panel {
-        position: relative;
-        background: linear-gradient(180deg, rgba(9,40,45,0.6), rgba(7,46,38,0.8));
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        overflow: hidden;
-      }
-
-      canvas {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-
+      .court-panel { position: relative; }
+      canvas { display: block; width: 100%; height: 100%; }
       .hud {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
+        position: absolute; inset: 0; pointer-events: none;
       }
-
       .hud-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 14px 18px;
+        display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 16px;
       }
-
       .team-score {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 8px 12px;
-        background: rgba(0,0,0,0.28);
-        border-radius: 12px;
-        border: 1px solid var(--line);
+        background: rgba(0,0,0,0.25); border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; min-width: 90px; text-align: center;
       }
-
-      .team-score small {
-        color: var(--muted);
-        font-size: 0.65rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .team-score b {
-        font-size: 2rem;
-      }
-
-      .center-badges {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        font-size: 0.78rem;
-        color: var(--muted);
-      }
-
+      .team-score small { color: var(--muted); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; }
+      .team-score b { display: block; font-size: 2rem; margin-top: 4px; }
+      .center-badges { display: flex; gap: 10px; flex-wrap: wrap; }
       .badge {
-        background: rgba(255,255,255,0.06);
-        border: 1px solid var(--line);
-        padding: 7px 10px;
-        border-radius: 999px;
+        background: rgba(255,255,255,0.05); border: 1px solid var(--line); border-radius: 999px; padding: 7px 10px; font-size: 0.7rem; color: var(--muted);
       }
 
-      .controls-panel {
-        padding: 16px;
+      .controls-panel { padding: 16px; }
+      .summary {
+        background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin-bottom: 12px;
       }
-
-      .player-summary {
-        background: rgba(255,255,255,0.03);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 12px;
-      }
-
-      .player-summary h3,
-      .meta-title {
-        margin: 0 0 10px;
-        color: var(--orange);
-      }
-
-      .stat-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px 10px;
-      }
-
+      .summary h3 { margin: 0 0 10px; color: var(--orange); }
+      .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
       .stat-item {
-        background: rgba(255,255,255,0.02);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 8px 10px;
-        display: flex;
-        justify-content: space-between;
+        background: rgba(255,255,255,0.025); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; display: flex; justify-content: space-between;
       }
-
       .buttons {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-top: 14px;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
       }
-
       button {
-        appearance: none;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,0.04);
-        color: var(--text);
-        border-radius: 12px;
-        padding: 11px 10px;
-        font-weight: 700;
-        cursor: pointer;
+        appearance: none; border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--text); border-radius: 12px; padding: 11px 10px; cursor: pointer; font-weight: 700;
       }
-
-      .primary {
-        background: linear-gradient(135deg, var(--orange), var(--orange-2));
-        border-color: transparent;
-        color: #101010;
-      }
-
-      .secondary {
-        background: rgba(76,201,240,0.08);
-        border-color: rgba(76,201,240,0.4);
-        color: var(--cyan);
-      }
-
-      .meter-wrap {
-        margin-top: 14px;
-      }
-
-      .meter-label {
-        font-size: 0.7rem;
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--muted);
-      }
-
-      .meter {
-        height: 16px;
-        width: 100%;
-        background: rgba(255,255,255,0.06);
-        border-radius: 999px;
-        overflow: hidden;
-        border: 1px solid var(--line);
-      }
-
-      .meter-fill {
-        width: 0%;
-        height: 100%;
-        background: linear-gradient(90deg, var(--green), var(--orange), var(--red));
-        transition: width 0.08s linear;
-      }
+      button.primary { background: linear-gradient(135deg, var(--orange), var(--orange-2)); color: #0d0d0d; border-color: transparent; }
+      button.secondary { background: rgba(76,201,240,0.08); color: var(--cyan); border-color: rgba(76,201,240,0.32); }
+      .meter-wrap { margin-top: 14px; }
+      .meter-label { font-size: 0.68rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+      .meter { height: 16px; width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+      .meter-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--green), var(--orange), var(--red)); transition: width 0.08s linear; }
 
       .tips {
-        margin-top: 14px;
-        padding: 12px;
-        border-radius: 12px;
-        background: rgba(76,201,240,0.04);
-        border: 1px solid rgba(76,201,240,0.25);
+        margin-top: 12px; background: rgba(76,201,240,0.04); border: 1px solid rgba(76,201,240,0.25); border-radius: 12px; padding: 12px;
       }
-
-      .tips ul {
-        margin: 8px 0 0 18px;
-        padding: 0;
-        color: var(--muted);
-        line-height: 1.6;
-        font-size: 0.76rem;
-      }
+      .tips ul { margin: 8px 0 0 18px; padding: 0; color: var(--muted); line-height: 1.6; font-size: 0.78rem; }
 
       @media (max-width: 1100px) {
-        .app {
-          grid-template-columns: 1fr;
-        }
-
-        .roster-panel,
-        .controls-panel {
-          max-height: none;
-        }
-
-        .court-panel {
-          min-height: 520px;
-        }
+        .app { grid-template-columns: 1fr; }
+        .court-panel { min-height: 480px; }
       }
     </style>
   </head>
@@ -342,36 +136,29 @@
       <aside class="panel roster-panel">
         <h2 class="section-title">Legends</h2>
         <div id="legendsList" class="roster-list"></div>
-
         <h2 class="section-title" style="margin-top: 18px;">Active Stars</h2>
         <div id="activeList" class="roster-list"></div>
       </aside>
 
       <main class="panel court-panel">
-        <canvas id="gameCanvas" width="900" height="520"></canvas>
+        <canvas id="gameCanvas" width="920" height="520"></canvas>
         <div class="hud">
           <div class="hud-top">
-            <div class="team-score">
-              <small>Player</small>
-              <b id="teamScoreText">0</b>
-            </div>
+            <div class="team-score"><small>Player</small><b id="teamScoreText">0</b></div>
             <div class="center-badges">
               <div class="badge" id="possessionBadge">Possession: You</div>
               <div class="badge" id="shotClockBadge">Shot Clock: 24</div>
               <div class="badge" id="rankBadge">Rank: Rookie</div>
             </div>
-            <div class="team-score">
-              <small>CPU</small>
-              <b id="cpuScoreText">0</b>
-            </div>
+            <div class="team-score"><small>CPU</small><b id="cpuScoreText">0</b></div>
           </div>
         </div>
       </main>
 
       <aside class="panel controls-panel">
-        <div class="player-summary">
+        <div class="summary">
           <h3 id="playerName">Select a player</h3>
-          <div class="stat-grid">
+          <div class="stats">
             <div class="stat-item"><span>Shot</span><strong id="shotStat">0</strong></div>
             <div class="stat-item"><span>Speed</span><strong id="speedStat">0</strong></div>
             <div class="stat-item"><span>Defense</span><strong id="defenseStat">0</strong></div>
@@ -386,7 +173,7 @@
           <button id="passBtn">Pass</button>
           <button id="dribbleBtn">Dribble</button>
           <button id="defendBtn">Defend</button>
-          <button id="specialBtn" style="grid-column: 1 / -1;">Signature Move</button>
+          <button style="grid-column: 1 / -1;" id="specialBtn">Signature Move</button>
         </div>
 
         <div class="meter-wrap">
@@ -395,7 +182,7 @@
         </div>
 
         <div class="tips">
-          <div class="meta-title">Controls</div>
+          <strong>Controls</strong>
           <ul>
             <li>Move: A / D</li>
             <li>Jump: W</li>
@@ -410,53 +197,49 @@
 
     <script>
       const legends = [
-        { name: 'Michael Jordan', team: 'Chicago Bulls', pos: 'G', shot: 99, speed: 88, defense: 81, power: 85, signature: 'Fadeaway', rating: 99, type: 'legend' },
-        { name: 'Kareem Abdul-Jabbar', team: 'Milwaukee Bucks', pos: 'C', shot: 92, speed: 70, defense: 90, power: 93, signature: 'Sky Hook', rating: 99, type: 'legend' },
-        { name: 'LeBron James', team: 'Los Angeles Lakers', pos: 'F', shot: 96, speed: 94, defense: 88, power: 92, signature: 'Transition Slam', rating: 98, type: 'legend' },
-        { name: 'Magic Johnson', team: 'Los Angeles Lakers', pos: 'PG', shot: 91, speed: 92, defense: 80, power: 70, signature: 'No-Look Pass', rating: 96, type: 'legend' },
-        { name: 'Larry Bird', team: 'Boston Celtics', pos: 'F', shot: 96, speed: 82, defense: 84, power: 78, signature: 'Three-Level Scoring', rating: 95, type: 'legend' },
-        { name: 'Kobe Bryant', team: 'Los Angeles Lakers', pos: 'G', shot: 96, speed: 89, defense: 78, power: 84, signature: 'Mamba Fade', rating: 97, type: 'legend' },
-        { name: 'Shaquille ONeal', team: 'Orlando Magic', pos: 'C', shot: 74, speed: 80, defense: 85, power: 99, signature: 'Monster Dunk', rating: 96, type: 'legend' },
-        { name: 'Hakeem Olajuwon', team: 'Houston Rockets', pos: 'C', shot: 84, speed: 81, defense: 92, power: 90, signature: 'Dream Shake', rating: 95, type: 'legend' },
-        { name: 'Tim Duncan', team: 'San Antonio Spurs', pos: 'C', shot: 88, speed: 72, defense: 94, power: 85, signature: 'Bank Shot', rating: 94, type: 'legend' },
-        { name: 'Kevin Durant', team: 'Phoenix Suns', pos: 'F', shot: 98, speed: 87, defense: 80, power: 76, signature: 'One-Legged Jumper', rating: 97, type: 'legend' },
-        { name: 'Stephen Curry', team: 'Golden State Warriors', pos: 'PG', shot: 99, speed: 86, defense: 72, power: 68, signature: 'Deep Range', rating: 98, type: 'legend' },
-        { name: 'Wilt Chamberlain', team: 'Philadelphia Warriors', pos: 'C', shot: 82, speed: 78, defense: 86, power: 99, signature: 'Power Finish', rating: 97, type: 'legend' }
+        { name: 'Michael Jordan', team: 'Bulls', pos: 'G', shot: 99, speed: 88, defense: 81, power: 85, signature: 'Fadeaway', rating: 99 },
+        { name: 'Kareem Abdul-Jabbar', team: 'Bucks', pos: 'C', shot: 92, speed: 70, defense: 90, power: 93, signature: 'Sky Hook', rating: 99 },
+        { name: 'LeBron James', team: 'Lakers', pos: 'F', shot: 96, speed: 94, defense: 88, power: 92, signature: 'Transition Slam', rating: 98 },
+        { name: 'Magic Johnson', team: 'Lakers', pos: 'PG', shot: 91, speed: 92, defense: 80, power: 70, signature: 'No-Look Pass', rating: 96 },
+        { name: 'Larry Bird', team: 'Celtics', pos: 'F', shot: 96, speed: 82, defense: 84, power: 78, signature: 'Three-Level Scoring', rating: 95 },
+        { name: 'Kobe Bryant', team: 'Lakers', pos: 'G', shot: 96, speed: 89, defense: 78, power: 84, signature: 'Mamba Fade', rating: 97 },
+        { name: 'Shaquille ONeal', team: 'Magic', pos: 'C', shot: 74, speed: 80, defense: 85, power: 99, signature: 'Monster Dunk', rating: 96 },
+        { name: 'Hakeem Olajuwon', team: 'Rockets', pos: 'C', shot: 84, speed: 81, defense: 92, power: 90, signature: 'Dream Shake', rating: 95 },
+        { name: 'Tim Duncan', team: 'Spurs', pos: 'C', shot: 88, speed: 72, defense: 94, power: 85, signature: 'Bank Shot', rating: 94 },
+        { name: 'Kevin Durant', team: 'Suns', pos: 'F', shot: 98, speed: 87, defense: 80, power: 76, signature: 'One-Legged Jumper', rating: 97 },
+        { name: 'Stephen Curry', team: 'Warriors', pos: 'PG', shot: 99, speed: 86, defense: 72, power: 68, signature: 'Deep Range', rating: 98 },
+        { name: 'Wilt Chamberlain', team: 'Warriors', pos: 'C', shot: 82, speed: 78, defense: 86, power: 99, signature: 'Power Finish', rating: 97 }
       ];
 
       const activePlayers = [
-        { name: 'Luka Doncic', team: 'Mavericks', pos: 'PG', shot: 96, speed: 90, defense: 68, power: 74, signature: 'Stepback', rating: 96, type: 'active' },
-        { name: 'Jayson Tatum', team: 'Celtics', pos: 'F', shot: 94, speed: 86, defense: 80, power: 82, signature: 'Pull-Up', rating: 94, type: 'active' },
-        { name: 'Giannis Antetokounmpo', team: 'Bucks', pos: 'F', shot: 81, speed: 93, defense: 82, power: 99, signature: 'Transition Finish', rating: 95, type: 'active' },
-        { name: 'Shai Gilgeous-Alexander', team: 'Thunder', pos: 'G', shot: 91, speed: 89, defense: 77, power: 80, signature: 'Mid-Range', rating: 93, type: 'active' },
-        { name: 'Victor Wembanyama', team: 'Spurs', pos: 'C', shot: 85, speed: 81, defense: 91, power: 97, signature: 'Sky Finish', rating: 95, type: 'active' },
-        { name: 'Ja Morant', team: 'Grizzlies', pos: 'G', shot: 87, speed: 96, defense: 60, power: 74, signature: 'Floater Burst', rating: 91, type: 'active' },
-        { name: 'Anthony Edwards', team: 'Timberwolves', pos: 'G', shot: 88, speed: 92, defense: 72, power: 84, signature: 'Explosive Drive', rating: 92, type: 'active' },
-        { name: 'Nikola Jokic', team: 'Nuggets', pos: 'C', shot: 90, speed: 79, defense: 78, power: 87, signature: 'Playmaker Hook', rating: 96, type: 'active' },
-        { name: 'Jalen Brunson', team: 'Knicks', pos: 'PG', shot: 90, speed: 87, defense: 78, power: 72, signature: 'Clutch Shot', rating: 91, type: 'active' },
-        { name: 'Tyrese Maxey', team: '76ers', pos: 'G', shot: 89, speed: 92, defense: 72, power: 74, signature: 'Speed Drive', rating: 90, type: 'active' }
+        { name: 'Luka Doncic', team: 'Mavericks', pos: 'PG', shot: 96, speed: 90, defense: 68, power: 74, signature: 'Stepback', rating: 96 },
+        { name: 'Jayson Tatum', team: 'Celtics', pos: 'F', shot: 94, speed: 86, defense: 80, power: 82, signature: 'Pull-Up', rating: 94 },
+        { name: 'Giannis Antetokounmpo', team: 'Bucks', pos: 'F', shot: 81, speed: 93, defense: 82, power: 99, signature: 'Transition Finish', rating: 95 },
+        { name: 'Shai Gilgeous-Alexander', team: 'Thunder', pos: 'G', shot: 91, speed: 89, defense: 77, power: 80, signature: 'Mid-Range', rating: 93 },
+        { name: 'Victor Wembanyama', team: 'Spurs', pos: 'C', shot: 85, speed: 81, defense: 91, power: 97, signature: 'Sky Finish', rating: 95 },
+        { name: 'Ja Morant', team: 'Grizzlies', pos: 'G', shot: 87, speed: 96, defense: 60, power: 74, signature: 'Floater Burst', rating: 91 },
+        { name: 'Anthony Edwards', team: 'Timberwolves', pos: 'G', shot: 88, speed: 92, defense: 72, power: 84, signature: 'Explosive Drive', rating: 92 },
+        { name: 'Nikola Jokic', team: 'Nuggets', pos: 'C', shot: 90, speed: 79, defense: 78, power: 87, signature: 'Playmaker Hook', rating: 96 },
+        { name: 'Jalen Brunson', team: 'Knicks', pos: 'PG', shot: 90, speed: 87, defense: 78, power: 72, signature: 'Clutch Shot', rating: 91 },
+        { name: 'Tyrese Maxey', team: '76ers', pos: 'G', shot: 89, speed: 92, defense: 72, power: 74, signature: 'Speed Drive', rating: 90 }
       ];
 
-      const allPlayers = [...legends, ...activePlayers];
-      let selectedPlayer = allPlayers[0];
-      let currentScore = 0;
+      let selectedPlayer = legends[0];
+      let playerScore = 0;
       let cpuScore = 0;
       let timer = 90;
       let shotMeter = 0;
       let matchRunning = false;
-      let shotWindow = null;
-      let shotZone = { min: 0.38, max: 0.62 };
-      let possession = 'you';
-      let combo = 1;
-      let money = 250;
       let rank = 'Rookie';
-      let lastAction = 'Ready';
+      let possession = 'you';
 
-      const gameCanvas = document.getElementById('gameCanvas');
-      const ctx = gameCanvas.getContext('2d');
+      const keys = { left:false, right:false, jump:false };
+      const user = { x: 160, y: 334, w: 34, h: 52, vy:0, onGround:true, dir:1 };
+      const cpu = { x: 720, y: 334, w: 34, h: 52, dir:-1 };
+      const ball = { x: 180, y: 310, r: 10, possessor:'user', vx:0, vy:0 };
+
       const legendsList = document.getElementById('legendsList');
       const activeList = document.getElementById('activeList');
-
       const playerNameEl = document.getElementById('playerName');
       const shotStatEl = document.getElementById('shotStat');
       const speedStatEl = document.getElementById('speedStat');
@@ -471,37 +254,32 @@
       const possessionBadgeEl = document.getElementById('possessionBadge');
       const shotClockBadgeEl = document.getElementById('shotClockBadge');
       const rankBadgeEl = document.getElementById('rankBadge');
+      const ctx = document.getElementById('gameCanvas').getContext('2d');
 
-      const keys = { left: false, right: false, jump: false, shoot: false };
-      const user = { x: 180, y: 330, vx: 0, vy: 0, width: 34, height: 52, jumpForce: 18, onGround: true, facing: 1, dribble: 0, stamina: 100 };
-      const cpu = { x: 680, y: 330, vx: 0, vy: 0, width: 34, height: 52, onGround: true, facing: -1, ai: 0, stamina: 100 };
-      const ball = { x: 220, y: 300, vx: 0, vy: 0, active: false, possessor: 'user' };
+      function makeRosterCard(player, parent) {
+        const card = document.createElement('div');
+        card.className = 'player-card' + (selectedPlayer.name === player.name ? ' active' : '');
+        card.innerHTML = `
+          <div class="avatar">${player.name.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()}</div>
+          <div class="name-box">
+            <strong>${player.name}</strong>
+            <small>${player.team} · ${player.pos}</small>
+          </div>
+          <div class="rating">${player.rating}</div>
+        `;
+        card.addEventListener('click', () => {
+          selectedPlayer = player;
+          renderRoster();
+          updateSelectedPlayerUI();
+        });
+        parent.appendChild(card);
+      }
 
       function renderRoster() {
         legendsList.innerHTML = '';
         activeList.innerHTML = '';
-
-        const makeCard = (player, parent) => {
-          const card = document.createElement('div');
-          card.className = 'player-card' + (selectedPlayer.name === player.name ? ' active' : '');
-          card.innerHTML = `
-            <div class="avatar">${player.name.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase()}</div>
-            <div class="name-box">
-              <strong>${player.name}</strong>
-              <small>${player.team} • ${player.pos}</small>
-            </div>
-            <div class="rating">${player.rating}</div>
-          `;
-          card.addEventListener('click', () => {
-            selectedPlayer = player;
-            renderRoster();
-            updateSelectedPlayerUI();
-          });
-          parent.appendChild(card);
-        };
-
-        legends.forEach(p => makeCard(p, legendsList));
-        activePlayers.forEach(p => makeCard(p, activeList));
+        legends.forEach(p => makeRosterCard(p, legendsList));
+        activePlayers.forEach(p => makeRosterCard(p, activeList));
       }
 
       function updateSelectedPlayerUI() {
@@ -512,269 +290,192 @@
         powerStatEl.textContent = selectedPlayer.power;
 
         const total = selectedPlayer.shot + selectedPlayer.speed + selectedPlayer.defense + selectedPlayer.power;
-        if (total >= 350) rank = 'Mythic';
-        else if (total >= 320) rank = 'Elite';
-        else if (total >= 295) rank = 'Star';
-        else rank = 'Rookie';
+        rank = total >= 350 ? 'Mythic' : total >= 320 ? 'Elite' : total >= 295 ? 'Star' : 'Rookie';
         rankBadgeEl.textContent = `Rank: ${rank}`;
+      }
+
+      function refreshHud() {
+        playerScoreEl.textContent = playerScore;
+        cpuScoreEl.textContent = cpuScore;
+        clockEl.textContent = timer;
+        teamScoreTextEl.textContent = playerScore;
+        cpuScoreTextEl.textContent = cpuScore;
+        possessionBadgeEl.textContent = `Possession: ${possession === 'you' ? 'You' : 'CPU'}`;
+        shotClockBadgeEl.textContent = `Shot Clock: ${Math.max(0, 24 - (90 - timer) % 24)}`;
+        rankBadgeEl.textContent = `Rank: ${rank}`;
+        shotMeterEl.style.width = shotMeter + '%';
       }
 
       function startMatch() {
         matchRunning = true;
-        currentScore = 0;
+        playerScore = 0;
         cpuScore = 0;
         timer = 90;
-        combo = 1;
+        shotMeter = 20;
         possession = 'you';
-        lastAction = 'Game started';
-        updateScoreUI();
         ball.possessor = 'user';
-        user.x = 180;
-        user.y = 330;
-        cpu.x = 680;
+        user.x = 150; user.y = 334; user.vy = 0; user.onGround = true;
+        cpu.x = 720; cpu.y = 334;
+        refreshHud();
       }
 
-      function updateScoreUI() {
-        playerScoreEl.textContent = currentScore;
-        cpuScoreEl.textContent = cpuScore;
-        clockEl.textContent = timer;
-        teamScoreTextEl.textContent = currentScore;
-        cpuScoreTextEl.textContent = cpuScore;
-        possessionBadgeEl.textContent = `Possession: ${possession === 'you' ? 'You' : 'CPU'}`;
-        shotClockBadgeEl.textContent = `Shot Clock: ${Math.max(0, 24 - Math.floor((timer % 24)))}`;
-        rankBadgeEl.textContent = `Rank: ${rank}`;
-      }
-
-      function updateMeter() {
-        shotMeterEl.style.width = `${Math.min(100, Math.max(0, shotMeter))}%`;
-      }
-
-      function triggerShot() {
-        if (!matchRunning) return;
-        if (ball.possessor !== 'user') return;
+      function shoot() {
+        if (!matchRunning || ball.possessor !== 'user') return;
+        const difficulty = 0.46 + selectedPlayer.shot / 170;
+        const success = Math.random() < Math.min(0.96, difficulty + shotMeter / 150);
 
         shotMeter = 0;
-        updateMeter();
-        const windowTarget = 0.52;
-        const playerSkill = selectedPlayer.shot / 100;
-        const timing = Math.random();
-        const made = timing >= (1 - (0.45 + playerSkill * 0.45));
-
-        if (made && Math.abs(timing - windowTarget) < 0.18) {
-          currentScore += 3;
-          combo *= 2;
-          lastAction = `${selectedPlayer.signature} went in!`;
-        } else if (made) {
-          currentScore += 2;
-          combo += 1;
-          lastAction = 'Good bucket';
-        } else {
-          combo = 1;
-          lastAction = 'Missed shot';
-        }
-
-        updateScoreUI();
         ball.possessor = 'none';
-        setTimeout(() => { ball.possessor = 'cpu'; possession = 'cpu'; }, 250);
+        if (success) {
+          const points = shotMeter > 85 ? 3 : 2;
+          playerScore += points;
+          possession = 'cpu';
+        } else {
+          possession = 'cpu';
+        }
+        refreshHud();
+        setTimeout(() => {
+          ball.possessor = 'cpu';
+          possession = 'cpu';
+        }, 240);
       }
 
       function passBall() {
-        if (!matchRunning) return;
-        if (ball.possessor !== 'user') return;
-        lastAction = `${selectedPlayer.name} dumped the ball`;
+        if (!matchRunning || ball.possessor !== 'user') return;
         ball.possessor = 'cpu';
         possession = 'cpu';
+        refreshHud();
       }
 
       function dribbleMove() {
-        if (!matchRunning) return;
-        if (ball.possessor !== 'user') return;
-        const move = selectedPlayer.signature;
-        lastAction = `${move} dribble move`;
+        if (!matchRunning || ball.possessor !== 'user') return;
+        shotMeter = Math.min(100, shotMeter + 18);
+        refreshHud();
       }
 
       function defendMove() {
         if (!matchRunning) return;
-        lastAction = 'Lockdown defense';
+        if (ball.possessor === 'cpu') {
+          const chance = Math.random() < (selectedPlayer.defense / 100) * 0.8;
+          if (chance) {
+            ball.possessor = 'user';
+            possession = 'you';
+          }
+        }
+        refreshHud();
       }
 
-      function specialMove() {
+      function signatureMove() {
+        if (!matchRunning || ball.possessor !== 'user') return;
+        const bonus = selectedPlayer.power / 100 + selectedPlayer.shot / 150;
+        const success = Math.random() < Math.min(0.92, 0.45 + bonus);
+        if (success) {
+          playerScore += selectedPlayer.name.includes('Kareem') ? 3 : 2;
+        }
+        ball.possessor = 'cpu';
+        possession = 'cpu';
+        refreshHud();
+      }
+
+      function doCpuResponse() {
         if (!matchRunning) return;
-        if (ball.possessor !== 'user') return;
-
-        const move = selectedPlayer.signature;
-        if (selectedPlayer.name.includes('Kareem')) {
-          currentScore += 3;
-          lastAction = 'Kareem sky hook!';
-        } else if (selectedPlayer.name.includes('Curry')) {
-          currentScore += 3;
-          lastAction = 'Stephen Curry deep three';
-        } else if (selectedPlayer.name.includes('Jordan')) {
-          currentScore += 3;
-          lastAction = 'Jordan fadeaway';
-        } else if (selectedPlayer.name.includes('Giannis')) {
-          currentScore += 3;
-          lastAction = 'Giannis transition slam';
-        } else {
-          currentScore += 2;
-          lastAction = `${move} signature finish`;
+        const cpuChance = 0.46 + (Math.random() * 0.2);
+        if (Math.random() < cpuChance) {
+          cpuScore += Math.random() < 0.5 ? 2 : 3;
+          ball.possessor = 'user';
+          possession = 'you';
         }
-
-        updateScoreUI();
-      }
-
-      function handleInput() {
-        if (keys.left) user.x -= 4;
-        if (keys.right) user.x += 4;
-        if (keys.jump && user.onGround) {
-          user.vy = -17;
-          user.onGround = false;
-        }
+        refreshHud();
       }
 
       function updatePhysics() {
-        user.vy += 0.7;
-        user.x += user.vx;
-        user.y += user.vy;
+        if (keys.left) user.x -= 5;
+        if (keys.right) user.x += 5;
+        if (keys.jump && user.onGround) {
+          user.vy = -18;
+          user.onGround = false;
+        }
 
-        if (user.y + user.height >= 420) {
-          user.y = 420 - user.height;
+        user.vy += 0.8;
+        user.y += user.vy;
+        if (user.y + user.h >= 420) {
+          user.y = 420 - user.h;
           user.vy = 0;
           user.onGround = true;
         }
 
-        cpu.x += (user.x > cpu.x ? 1.5 : -1.5) * 0.6;
-        cpu.x = Math.max(500, Math.min(820, cpu.x));
+        user.x = Math.max(60, Math.min(280, user.x));
+        cpu.x += (user.x < cpu.x ? -1 : 1) * 0.8;
+        cpu.x = Math.max(600, Math.min(820, cpu.x));
 
         if (ball.possessor === 'user') {
-          ball.x = user.x + 10;
-          ball.y = user.y - 4;
+          ball.x = user.x + 16;
+          ball.y = user.y - 8;
         } else if (ball.possessor === 'cpu') {
-          ball.x = cpu.x + 8;
-          ball.y = cpu.y - 4;
+          ball.x = cpu.x + 16;
+          ball.y = cpu.y - 8;
         } else {
           ball.x += ball.vx;
           ball.y += ball.vy;
-          ball.vy += 0.18;
-        }
-
-        if (ball.y > 440 && ball.possessor === 'none') {
-          ball.vy *= -0.4;
-          ball.vx *= 0.82;
+          ball.vy += 0.22;
         }
       }
 
       function drawCourt() {
-        ctx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
+        ctx.clearRect(0,0,920,520);
+        ctx.fillStyle = '#0d714c';
+        ctx.fillRect(0,0,920,520);
 
-        // background
-        ctx.fillStyle = '#0f6b47';
-        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-
-        // half-court
-        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.25)';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(gameCanvas.width / 2, 0);
-        ctx.lineTo(gameCanvas.width / 2, gameCanvas.height);
-        ctx.stroke();
+        ctx.moveTo(460, 0); ctx.lineTo(460, 520); ctx.stroke();
+        ctx.beginPath(); ctx.arc(460, 260, 80, 0, Math.PI * 2); ctx.stroke();
 
-        // key/
-        ctx.strokeRect(60, 150, 180, 220);
-        ctx.strokeRect(660, 150, 180, 220);
-        ctx.beginPath();
-        ctx.arc(gameCanvas.width / 2, 260, 80, 0, Math.PI * 2);
-        ctx.stroke();
+        ctx.strokeRect(60, 160, 180, 240);
+        ctx.strokeRect(680, 160, 180, 240);
 
-        // lane lines
-        ctx.beginPath();
-        ctx.arc(210, 260, 20, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(690, 260, 20, 0, Math.PI * 2);
-        ctx.stroke();
-
-        // rim + backboard
         ctx.fillStyle = '#fff';
-        ctx.fillRect(740, 110, 30, 60);
-        ctx.fillRect(767, 110, 4, 60);
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.moveTo(770, 118);
-        ctx.lineTo(820, 118);
-        ctx.stroke();
+        ctx.fillRect(760, 120, 30, 60);
+        ctx.fillRect(780, 120, 4, 60);
 
-        ctx.strokeStyle = '#fff';
-        ctx.beginPath();
-        ctx.moveTo(120, 120);
-        ctx.lineTo(150, 120);
-        ctx.stroke();
+        drawPlayer(user.x, user.y, '#4cc9f0', true);
+        drawPlayer(cpu.x, cpu.y, '#ef476f', false);
 
-        // draw players
-        drawPlayer(user, '#4cc9f0', true);
-        drawPlayer(cpu, '#ef476f', false);
-
-        // ball
         ctx.beginPath();
-        ctx.fillStyle = '#f9c74f';
-        ctx.arc(ball.x, ball.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffca3a';
+        ctx.arc(ball.x, ball.y, 9, 0, Math.PI * 2);
         ctx.fill();
 
-        // shot meter overlay on court for user only
-        ctx.fillStyle = 'rgba(0,0,0,0.25)';
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
         ctx.fillRect(20, 20, 220, 18);
         ctx.fillStyle = '#90be6d';
         ctx.fillRect(20, 20, 220 * (shotMeter / 100), 18);
       }
 
-      function drawPlayer(player, color, isUser) {
+      function drawPlayer(x, y, color, isUser) {
         ctx.fillStyle = color;
-        ctx.fillRect(player.x, player.y, player.width, player.height);
+        ctx.fillRect(x, y, 34, 52);
         ctx.fillStyle = '#fff';
-        ctx.fillRect(player.x + 6, player.y - 18, 22, 16);
+        ctx.fillRect(x + 6, y - 18, 22, 16);
         ctx.fillStyle = '#000';
-        ctx.fillRect(player.x + 8, player.y + 14, 8, 18);
-        ctx.fillRect(player.x + 18, player.y + 14, 8, 18);
+        ctx.fillRect(x + 8, y + 14, 7, 18);
+        ctx.fillRect(x + 19, y + 14, 7, 18);
       }
 
       function animate() {
-        handleInput();
         updatePhysics();
         drawCourt();
         requestAnimationFrame(animate);
       }
 
-      function tickClock() {
-        setInterval(() => {
-          if (matchRunning) {
-            timer -= 1;
-            if (timer <= 0) {
-              timer = 0;
-              matchRunning = false;
-            }
-            updateScoreUI();
-          }
-        }, 1000);
-      }
-
-      function addShotMeter() {
-        setInterval(() => {
-          if (matchRunning) {
-            shotMeter = Math.min(100, shotMeter + 6);
-            updateMeter();
-          }
-        }, 100);
-      }
-
-      document.getElementById('shootBtn').addEventListener('click', triggerShot);
+      document.getElementById('startBtn').addEventListener('click', startMatch);
+      document.getElementById('shootBtn').addEventListener('click', shoot);
       document.getElementById('passBtn').addEventListener('click', passBall);
       document.getElementById('dribbleBtn').addEventListener('click', dribbleMove);
       document.getElementById('defendBtn').addEventListener('click', defendMove);
-      document.getElementById('specialBtn').addEventListener('click', specialMove);
-      document.getElementById('startBtn').addEventListener('click', startMatch);
+      document.getElementById('specialBtn').addEventListener('click', signatureMove);
       document.getElementById('upgradeBtn').addEventListener('click', () => {
-        money -= 25;
         selectedPlayer.shot = Math.min(99, selectedPlayer.shot + 1);
         selectedPlayer.speed = Math.min(99, selectedPlayer.speed + 1);
         selectedPlayer.defense = Math.min(99, selectedPlayer.defense + 1);
@@ -786,63 +487,33 @@
         if (e.key === 'a' || e.key === 'ArrowLeft') keys.left = true;
         if (e.key === 'd' || e.key === 'ArrowRight') keys.right = true;
         if (e.key === 'w' || e.key === 'ArrowUp') keys.jump = true;
-        if (e.code === 'Space') triggerShot();
+        if (e.code === 'Space') shoot();
         if (e.key === 'p') passBall();
         if (e.key === 'f') defendMove();
-        if (e.key === 'e') specialMove();
+        if (e.key === 'e') signatureMove();
       });
-
       window.addEventListener('keyup', (e) => {
         if (e.key === 'a' || e.key === 'ArrowLeft') keys.left = false;
         if (e.key === 'd' || e.key === 'ArrowRight') keys.right = false;
         if (e.key === 'w' || e.key === 'ArrowUp') keys.jump = false;
       });
 
+      setInterval(() => {
+        if (!matchRunning) return;
+        timer = Math.max(0, timer - 1);
+        shotMeter = Math.min(100, shotMeter + 5);
+        refreshHud();
+        if (timer === 0) matchRunning = false;
+      }, 1000);
+
+      setInterval(() => {
+        if (matchRunning && Math.random() < 0.15) doCpuResponse();
+      }, 700);
+
       renderRoster();
       updateSelectedPlayerUI();
-      updateScoreUI();
-      updateMeter();
+      refreshHud();
       animate();
-      tickClock();
-      addShotMeter();
     </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

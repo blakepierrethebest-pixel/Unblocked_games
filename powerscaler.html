@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerScaler</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; min-height: 100vh; display: grid; place-items: center;
+        background: linear-gradient(135deg, #0d1321, #1b2440);
+        color: white; font-family: Arial, sans-serif;
+      }
+      .panel {
+        width: min(90vw, 920px); background: rgba(16,25,40,0.92); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 22px; box-shadow: 0 20px 55px rgba(0,0,0,0.3);
+      }
+      h1 { margin-top: 0; color: #ffb703; }
+      .status { color: #4cc9f0; margin: 10px 0 18px; }
+      .question { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+      .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+      button {
+        appearance: none; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: white; border-radius: 12px; padding: 14px 12px; cursor: pointer; font-weight: 700;
+      }
+      button:hover { border-color: rgba(255,183,3,0.7); }
+      .score { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(76,201,240,0.08); border: 1px solid rgba(76,201,240,0.22); }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>PowerScaler</h1>
+      <div class="status" id="status">New debate arena loaded.</div>
+      <div class="question" id="question">Question will appear here.</div>
+      <div class="choices" id="choices"></div>
+      <div class="score" id="score">Score: 0</div>
+    </div>
+
+    <script>
+      const debates = [
+        {
+          prompt: 'Who is more powerful: Goku or Zeus?',
+          correct: 'Goku in some scaling contexts, but Zeus is stronger in mythic pure god-tier feats',
+          options: [
+            'Goku in most modern composite scaling',
+            'Zeus in pure mythic god-tier scaling',
+            'They are equal under all conditions',
+            'Neither; a cosmic entity like the One Above All is beyond both'
+          ]
+        },
+        {
+          prompt: 'Who scales higher in raw destructive output: Thor or Superman?',
+          correct: 'Thor can rival or exceed Superman depending on the full comic context, but Superman usually wins in modern mainstream scaling',
+          options: [
+            'Thor in every canon',
+            'Superman in most mainstream comics',
+            'They are always equal',
+            'Neither has enough feats to compare'
+          ]
+        },
+        {
+          prompt: 'Which character is more dangerous in a high-stakes magic battle: Madara or Hades?',
+          correct: 'Hades is a god-tier mythic force, but Madara is cosmically dangerous in anime-scale feats',
+          options: [
+            'Madara by raw destructive output',
+            'Hades by mythic tier power control',
+            'Equal due to both being top-tier warlords',
+            'Neither because both are underpowered compared to the divine void'
+          ]
+        },
+        {
+          prompt: 'Who is more skillfully tactical in a battle: Odin or Gojo?',
+          correct: 'Odin is far more strategic and battle-hardened in mythic conflict, but Gojo is absurdly powerful with superior reaction speed',
+          options: [
+            'Odin by strategic command and experience',
+            'Gojo by raw reaction speed and precision',
+            'Neither; both are equal in battle IQ',
+            'Both lose to Hulk in pure force'
+          ]
+        }
+      ];
+
+      let index = 0;
+      let score = 0;
+
+      const questionEl = document.getElementById('question');
+      const choicesEl = document.getElementById('choices');
+      const statusEl = document.getElementById('status');
+      const scoreEl = document.getElementById('score');
+
+      function renderDebate() {
+        const current = debates[index];
+        questionEl.textContent = current.prompt;
+        choicesEl.innerHTML = '';
+
+        current.options.forEach((option) => {
+          const btn = document.createElement('button');
+          btn.textContent = option;
+          btn.addEventListener('click', () => {
+            if (option === current.options[0] && current.correct.includes('Goku') || option === current.options[1] && current.correct.includes('Superman') || option === current.options[1] && current.correct.includes('Hades') || option === current.options[0] && current.correct.includes('Odin')) {
+              score += 1;
+              statusEl.textContent = 'Correct. The logic was sound.';
+            } else {
+              statusEl.textContent = `Wrong. Better answer: ${current.correct}`;
+            }
+            scoreEl.textContent = `Score: ${score}`;
+            index = (index + 1) % debates.length;
+            setTimeout(renderDebate, 1200);
+          });
+          choicesEl.appendChild(btn);
+        });
+      }
+
+      renderDebate();
+    </script>
+  </body>
+</html>
