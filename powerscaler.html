@@ -3,107 +3,127 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PowerScaler</title>
+    <title>PowerScaler Arena</title>
     <style>
       * { box-sizing: border-box; }
       body {
-        margin: 0; min-height: 100vh; display: grid; place-items: center;
-        background: linear-gradient(135deg, #0d1321, #1b2440);
-        color: white; font-family: Arial, sans-serif;
+        margin: 0; min-height: 100vh; display: grid; place-items: center; color: white;
+        background: linear-gradient(135deg, #0a1221, #1b2140 50%, #0b1220);
+        font-family: Arial, sans-serif;
       }
       .panel {
-        width: min(90vw, 920px); background: rgba(16,25,40,0.92); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 22px; box-shadow: 0 20px 55px rgba(0,0,0,0.3);
+        width: min(92vw, 980px); background: rgba(14, 22, 34, 0.96); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 22px; box-shadow: 0 24px 60px rgba(0,0,0,0.3);
       }
       h1 { margin-top: 0; color: #ffb703; }
       .status { color: #4cc9f0; margin: 10px 0 18px; }
-      .question { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-      .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+      .question {
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 18px; margin-bottom: 14px; line-height: 1.6;
+      }
+      .choices {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px;
+      }
       button {
-        appearance: none; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: white; border-radius: 12px; padding: 14px 12px; cursor: pointer; font-weight: 700;
+        appearance: none; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: white; border-radius: 12px; padding: 14px 12px; cursor: pointer; font-weight: 700; text-align: left;
       }
       button:hover { border-color: rgba(255,183,3,0.7); }
-      .score { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(76,201,240,0.08); border: 1px solid rgba(76,201,240,0.22); }
+      .score { margin-top: 14px; padding: 12px; border-radius: 10px; background: rgba(76,201,240,0.08); border: 1px solid rgba(76,201,240,0.25); }
     </style>
   </head>
   <body>
     <div class="panel">
-      <h1>PowerScaler</h1>
-      <div class="status" id="status">New debate arena loaded.</div>
-      <div class="question" id="question">Question will appear here.</div>
+      <h1>PowerScaler Arena</h1>
+      <div class="status" id="status">Arena open. Select the best power-scaling answer.</div>
+      <div class="question" id="question">Question loading...</div>
       <div class="choices" id="choices"></div>
       <div class="score" id="score">Score: 0</div>
     </div>
 
     <script>
-      const debates = [
+      const debateDeck = [
         {
-          prompt: 'Who is more powerful: Goku or Zeus?',
-          correct: 'Goku in some scaling contexts, but Zeus is stronger in mythic pure god-tier feats',
+          prompt: 'Who is stronger in a direct high-stakes match: Goku or Zeus?',
+          correct: 'Zeus in pure mythic god-tier scaling, but Goku wins under many anime assumptions and composite scaling.',
           options: [
-            'Goku in most modern composite scaling',
-            'Zeus in pure mythic god-tier scaling',
-            'They are equal under all conditions',
-            'Neither; a cosmic entity like the One Above All is beyond both'
-          ]
+            'Goku in most modern anime scaling',
+            'Zeus in pure mythic god-tier rules',
+            'They are always equal',
+            'Neither; a cosmic entity is above both'
+          ],
+          bestIndex: 1
         },
         {
-          prompt: 'Who scales higher in raw destructive output: Thor or Superman?',
-          correct: 'Thor can rival or exceed Superman depending on the full comic context, but Superman usually wins in modern mainstream scaling',
+          prompt: 'Between Thor and Superman, who usually scales higher in broad mainstream comics?',
+          correct: 'Superman usually scales higher in mainstream comics, while Thor can rival or exceed him in specific mythic contexts.',
           options: [
             'Thor in every canon',
             'Superman in most mainstream comics',
             'They are always equal',
-            'Neither has enough feats to compare'
-          ]
+            'Neither has enough feats'
+          ],
+          bestIndex: 1
         },
         {
-          prompt: 'Which character is more dangerous in a high-stakes magic battle: Madara or Hades?',
-          correct: 'Hades is a god-tier mythic force, but Madara is cosmically dangerous in anime-scale feats',
+          prompt: 'If Hades and Madara battle under equal conditions, who is more dangerous?',
+          correct: 'Madara is more dangerous for raw destructive output, while Hades is terrifying for mythic god-level authority and battlefield control.',
           options: [
             'Madara by raw destructive output',
-            'Hades by mythic tier power control',
-            'Equal due to both being top-tier warlords',
-            'Neither because both are underpowered compared to the divine void'
-          ]
+            'Hades by mythic control and dominance',
+            'Both are exactly equal',
+            'Neither; a void entity is above both'
+          ],
+          bestIndex: 0
         },
         {
-          prompt: 'Who is more skillfully tactical in a battle: Odin or Gojo?',
-          correct: 'Odin is far more strategic and battle-hardened in mythic conflict, but Gojo is absurdly powerful with superior reaction speed',
+          prompt: 'Which fighter is more strategically dangerous in a long battle: Odin or Gojo?',
+          correct: 'Odin is generally stronger when you include long-form strategic and mythic battlefield control, while Gojo wins in raw precision and reaction speed.',
           options: [
-            'Odin by strategic command and experience',
+            'Odin by strategic command and mythic experience',
             'Gojo by raw reaction speed and precision',
-            'Neither; both are equal in battle IQ',
-            'Both lose to Hulk in pure force'
-          ]
+            'They are equal in all aspects',
+            'Hulk is better in a long battle'
+          ],
+          bestIndex: 0
+        },
+        {
+          prompt: 'Between Kareem Abdul-Jabbar and LeBron James, who is the more complete all-around player in basketball history?',
+          correct: 'LeBron is the more complete modern-era all-around player, while Kareem is more dominant in pure scoring and post-game craft.',
+          options: [
+            'Kareem is the more complete purely historical player',
+            'LeBron is the more complete all-around modern player',
+            'They are equal',
+            'Neither is above Jordan'
+          ],
+          bestIndex: 1
         }
       ];
 
       let index = 0;
       let score = 0;
 
+      const statusEl = document.getElementById('status');
       const questionEl = document.getElementById('question');
       const choicesEl = document.getElementById('choices');
-      const statusEl = document.getElementById('status');
       const scoreEl = document.getElementById('score');
 
       function renderDebate() {
-        const current = debates[index];
-        questionEl.textContent = current.prompt;
+        const deck = debateDeck[index % debateDeck.length];
+        questionEl.textContent = deck.prompt;
         choicesEl.innerHTML = '';
 
-        current.options.forEach((option) => {
+        deck.options.forEach((option, i) => {
           const btn = document.createElement('button');
           btn.textContent = option;
           btn.addEventListener('click', () => {
-            if (option === current.options[0] && current.correct.includes('Goku') || option === current.options[1] && current.correct.includes('Superman') || option === current.options[1] && current.correct.includes('Hades') || option === current.options[0] && current.correct.includes('Odin')) {
+            const correct = i === deck.bestIndex;
+            if (correct) {
               score += 1;
-              statusEl.textContent = 'Correct. The logic was sound.';
+              statusEl.textContent = 'Correct. That answer fits the strongest scaling logic.';
             } else {
-              statusEl.textContent = `Wrong. Better answer: ${current.correct}`;
+              statusEl.textContent = `Incorrect. Better answer: ${deck.correct}`;
             }
             scoreEl.textContent = `Score: ${score}`;
-            index = (index + 1) % debates.length;
-            setTimeout(renderDebate, 1200);
+            index = (index + 1) % debateDeck.length;
+            setTimeout(renderDebate, 1100);
           });
           choicesEl.appendChild(btn);
         });
