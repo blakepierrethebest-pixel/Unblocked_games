@@ -3,205 +3,106 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GameHub // Arcade, Arena, and Action</title>
+    <title>GameHub</title>
     <style>
       :root {
-        --bg: #0a1220;
-        --panel: rgba(16, 24, 37, 0.9);
-        --panel-alt: rgba(23, 36, 58, 0.9);
+        --bg: #09121d;
+        --panel: rgba(15, 23, 37, 0.92);
+        --line: rgba(255,255,255,0.12);
         --accent: #ffb703;
         --accent-2: #ff7b00;
         --cyan: #4cc9f0;
         --green: #90be6d;
         --red: #ef476f;
         --text: #edf6ff;
-        --muted: #b9c9dd;
-        --line: rgba(255,255,255,0.12);
+        --muted: #b7cde8;
       }
-
       * { box-sizing: border-box; }
       body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: Inter, "Segoe UI", sans-serif;
-        color: var(--text);
-        background:
-          radial-gradient(circle at top, rgba(76,201,240,0.16), transparent 20%),
-          linear-gradient(135deg, #08111d 0%, #102540 48%, #0a1220 100%);
+        margin: 0; min-height: 100vh; background: radial-gradient(circle at top, rgba(76,201,240,0.16), transparent 18%), linear-gradient(135deg, #060d17, #122641 40%, #0b1320 100%);
+        color: var(--text); font-family: Arial, sans-serif;
       }
-
-      .wrap {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 24px 20px 50px;
-      }
-
-      .topbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 24px;
-      }
-
-      h1 {
-        margin: 0;
-        font-size: clamp(2rem, 5vw, 3.2rem);
-        letter-spacing: 0.04em;
-        color: var(--accent);
-      }
-
-      .badge-row {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .badge {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        color: var(--muted);
-        padding: 8px 12px;
-        font-size: 0.72rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 16px;
-      }
-
-      .game-card {
-        display: block;
-        text-decoration: none;
-        color: var(--text);
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.18);
-        transition: transform 0.15s ease, border-color 0.15s ease;
-      }
-
-      .game-card:hover {
-        transform: translateY(-3px);
-        border-color: rgba(255,183,3,0.6);
-      }
-
-      .thumb {
-        height: 120px;
-        background: linear-gradient(135deg, rgba(255,183,3,0.24), rgba(76,201,240,0.14));
-        display: grid;
-        place-items: center;
-        font-size: 2.4rem;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .game-info {
-        padding: 16px;
-      }
-
-      .game-info h3 {
-        margin: 0 0 8px;
-        font-size: 1.12rem;
-      }
-
-      .game-info p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.5;
-        font-size: 0.82rem;
-      }
-
-      .hero {
-        margin: 20px 0 28px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid var(--line);
-        padding: 18px 18px 12px;
-        border-radius: 18px;
-      }
-
-      .hero h2 {
-        margin: 0 0 10px;
-        font-size: 1.5rem;
-      }
-
-      .hero p {
-        margin: 0;
-        line-height: 1.65;
-        color: var(--muted);
-      }
+      .wrap { max-width: 1240px; margin: 0 auto; padding: 24px 18px 60px; }
+      .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+      h1 { margin: 0; color: var(--accent); font-size: clamp(2rem, 6vw, 3.4rem); }
+      .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+      .badge { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--muted); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+      .hero { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 18px; padding: 18px; margin-bottom: 26px; }
+      .hero h2 { margin: 0 0 10px; color: var(--accent); }
+      .hero p { margin: 0; color: var(--muted); line-height: 1.7; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }
+      .game-card { display: block; text-decoration: none; color: var(--text); background: rgba(14,23,36,0.9); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; transition: transform 0.15s ease, border-color 0.15s ease; }
+      .game-card:hover { transform: translateY(-3px); border-color: rgba(255,183,3,0.6); }
+      .thumb { height: 120px; display: grid; place-items: center; font-size: 2.5rem; background: linear-gradient(135deg, rgba(255,183,3,0.22), rgba(76,201,240,0.14)); border-bottom: 1px solid var(--line); }
+      .body { padding: 16px; }
+      .body h3 { margin: 0 0 8px; }
+      .body p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 0.83rem; }
     </style>
   </head>
   <body>
     <div class="wrap">
       <div class="topbar">
         <h1>GameHub</h1>
-        <div class="badge-row">
+        <div class="badges">
           <div class="badge">BasketBros</div>
-          <div class="badge">Spider Game</div>
+          <div class="badge">Spider Swing</div>
           <div class="badge">PowerScaler</div>
           <div class="badge">Platformers</div>
+          <div class="badge">Quiz</div>
         </div>
       </div>
 
       <div class="hero">
-        <h2>Play the first wave</h2>
-        <p>
-          This site now includes the basketball arena, a web-swinging city game,
-          a smart powerscaling debate arena, and a growing library of future game modes.
-        </p>
+        <h2>Play the current wave</h2>
+        <p>GameHub is expanding into a broader arcade and arena site with sports, platforming, debate, and comic trivia. This version includes multiple playable mini-games and a better site structure for the next wave of content.</p>
       </div>
 
       <div class="grid">
         <a class="game-card" href="basketball-pro.html">
           <div class="thumb">🏀</div>
-          <div class="game-info">
+          <div class="body">
             <h3>BasketBros Pro</h3>
-            <p>Legendary scorers and current stars battle in a fast, upgradeable basketball arena.</p>
+            <p>Fast pickup match with star players, signature moves, upgrades, and a full roster.</p>
           </div>
         </a>
 
         <a class="game-card" href="spider-game.html">
           <div class="thumb">🕷️</div>
-          <div class="game-info">
+          <div class="body">
             <h3>Spider City Swing</h3>
-            <p>Web-swing through the city, dodge threats, and build combos in a parkour-style action run.</p>
+            <p>Web-swing, collect, dodge threats, and build score in a city parkour run.</p>
           </div>
         </a>
 
         <a class="game-card" href="powerscaler.html">
           <div class="thumb">🧠</div>
-          <div class="game-info">
+          <div class="body">
             <h3>PowerScaler</h3>
-            <p>Argue with anime, mythology, and comic characters to find the correct power scaling logic.</p>
+            <p>Smart debate-style scaling questions with anime, mythology, and comic lore.</p>
           </div>
         </a>
 
-        <a class="game-card" href="#">
-          <div class="thumb">🎮</div>
-          <div class="game-info">
-            <h3>Platformer Lab</h3>
-            <p>Rick-and-Morty-inspired action levels, parkour movement, and city sprint modes in development.</p>
+        <a class="game-card" href="platformer.html">
+          <div class="thumb">🦸</div>
+          <div class="body">
+            <h3>City Sprint</h3>
+            <p>Platforming with jumping, enemy dodging, crystals, and a level finish challenge.</p>
           </div>
         </a>
 
-        <a class="game-card" href="#">
-          <div class="thumb">🧩</div>
-          <div class="game-info">
-            <h3>Puzzle Arena</h3>
-            <p>Card, logic, trivia, and puzzle challenges launching next.</p>
+        <a class="game-card" href="marvel-dc-quiz.html">
+          <div class="thumb">🦇</div>
+          <div class="body">
+            <h3>Marvel/DC Quiz</h3>
+            <p>Comic lore trivia with multiple rounds and a score-based challenge mode.</p>
           </div>
         </a>
 
         <a class="game-card" href="#">
           <div class="thumb">⚽</div>
-          <div class="game-info">
-            <h3>Sports Collection</h3>
-            <p>Soccer, basketball, tennis, baseball, football, and more modes.</p>
+          <div class="body">
+            <h3>Sports Hub</h3>
+            <p>Soccer, tennis, football, golf, and arcade modes are in the next wave build.</p>
           </div>
         </a>
       </div>

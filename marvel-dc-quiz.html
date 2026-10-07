@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marvel/DC Quiz</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; min-height: 100vh; display: grid; place-items: center; background: linear-gradient(135deg, #0d1420, #1c2f40 50%, #0b101a); color: white; font-family: Arial, sans-serif;
+      }
+      .panel {
+        width: min(90vw, 900px); background: rgba(14, 22, 35, 0.95); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 22px; box-shadow: 0 22px 60px rgba(0,0,0,0.32);
+      }
+      h1 { color: #ffb703; margin-top: 0; }
+      .status { color: #4cc9f0; margin-bottom: 14px; }
+      .question { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; line-height: 1.6; }
+      .choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 14px; }
+      button { appearance: none; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: white; border-radius: 12px; padding: 14px; font-weight: 700; cursor: pointer; }
+      button:hover { border-color: rgba(255,183,3,0.7); }
+      .score { margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(76,201,240,0.08); border: 1px solid rgba(76,201,240,0.22); }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>Marvel/DC Quiz</h1>
+      <div class="status" id="status">Comic lore challenge loaded.</div>
+      <div class="question" id="question">Question loading...</div>
+      <div class="choices" id="choices"></div>
+      <div class="score" id="score">Score: 0</div>
+    </div>
+
+    <script>
+      const quizDeck = [
+        { q: 'Who is the primary creator of the Green Lantern Corps in DC lore?', a: 'The Guardians of Oa', options: ['The Justice League', 'The Guardians of Oa', 'The Spectre', 'Darkseid'] },
+        { q: 'Which Marvel hero is known for the phrase “I can do this all day”?', a: 'Captain America', options: ['Iron Man', 'Captain America', 'Spider-Man', 'Bucky Barnes'] },
+        { q: 'Who is the main villain behind the Infinity Gauntlet conflict in Marvel comics?', a: 'Thanos', options: ['Hela', 'Thanos', 'Ultron', 'Magneto'] },
+        { q: 'Which DC hero is often associated with the symbol of a bat?', a: 'Batman', options: ['Superman', 'Batman', 'Nightwing', 'Aquaman'] },
+        { q: 'Who is the Asgardian god of thunder?', a: 'Thor', options: ['Loki', 'Thor', 'Odin', 'Hercules'] }
+      ];
+
+      let round = 0;
+      let score = 0;
+
+      const statusEl = document.getElementById('status');
+      const questionEl = document.getElementById('question');
+      const choicesEl = document.getElementById('choices');
+      const scoreEl = document.getElementById('score');
+
+      function renderQuestion() {
+        const card = quizDeck[round % quizDeck.length];
+        questionEl.textContent = card.q;
+        choicesEl.innerHTML = '';
+
+        card.options.forEach((option) => {
+          const btn = document.createElement('button');
+          btn.textContent = option;
+          btn.addEventListener('click', () => {
+            if (option === card.a) {
+              score += 1;
+              statusEl.textContent = 'Correct. Great answer.';
+            } else {
+              statusEl.textContent = `Incorrect. Correct answer: ${card.a}`;
+            }
+            scoreEl.textContent = `Score: ${score}`;
+            round += 1;
+            setTimeout(renderQuestion, 1000);
+          });
+          choicesEl.appendChild(btn);
+        });
+      }
+
+      renderQuestion();
+    </script>
+  </body>
+</html>
