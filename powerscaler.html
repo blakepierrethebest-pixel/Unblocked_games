@@ -3,133 +3,1204 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PowerScaler Arena</title>
+    <title>PowerScaler Pro</title>
     <style>
+      :root {
+        --bg: #050c14;
+        --bg2: #0a1320;
+        --panel: rgba(13, 20, 30, 0.96);
+        --panel2: rgba(8, 13, 22, 0.95);
+        --line: rgba(148, 163, 184, 0.22);
+        --text: #edf7ff;
+        --muted: #bfd4ea;
+        --cyan: #60d6ff;
+        --blue: #3aa0ff;
+        --gold: #f7cc66;
+        --green: #7df7bf;
+        --red: #ff6b6b;
+        --amber: #ffb76b;
+        --purple: #b486ff;
+      }
+
       * { box-sizing: border-box; }
-      body {
-        margin: 0; min-height: 100vh; display: grid; place-items: center; color: white;
-        background: linear-gradient(135deg, #0a1221, #1b2140 50%, #0b1220);
-        font-family: Arial, sans-serif;
+      html, body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at top, rgba(96, 214, 255, 0.15), transparent 28%),
+          linear-gradient(135deg, #040911, #0a1120 42%, #0b1624 100%);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
       }
-      .panel {
-        width: min(92vw, 980px); background: rgba(14, 22, 34, 0.96); border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; padding: 22px; box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+
+      body { padding: 18px; }
+
+      .shell {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: rgba(8, 13, 20, 0.84);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 28px 90px rgba(0,0,0,0.45);
       }
-      h1 { margin-top: 0; color: #ffb703; }
-      .status { color: #4cc9f0; margin: 10px 0 18px; }
-      .question {
-        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 18px; margin-bottom: 14px; line-height: 1.6;
+
+      .topbar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(12, 19, 29, 0.96);
       }
-      .choices {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px;
+
+      .brand-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
       }
+
+      .title {
+        margin: 0;
+        font-size: clamp(1.8rem, 2.8vw, 2.8rem);
+        color: var(--gold);
+        letter-spacing: 0.12em;
+        font-weight: 900;
+      }
+
+      .sub {
+        color: var(--muted);
+        font-size: 0.74rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--text);
+        background: rgba(255,255,255,0.03);
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 430px minmax(0, 1fr);
+        min-height: 820px;
+      }
+
+      .sidebar {
+        background: rgba(9, 15, 23, 0.96);
+        border-right: 1px solid var(--line);
+        padding: 16px 14px 10px;
+      }
+
+      .section-header {
+        color: var(--cyan);
+        font-size: 0.76rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin: 6px 0 10px;
+      }
+
+      .story-card {
+        background: linear-gradient(180deg, rgba(16, 26, 36, 0.95), rgba(10, 17, 25, 0.96));
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 16px;
+      }
+
+      .story-title {
+        color: var(--gold);
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+
+      .progress {
+        width: 100%;
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, var(--cyan), var(--blue));
+        transition: width 0.3s ease;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .toolbar input {
+        flex: 1;
+        width: 100%;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        color: var(--text);
+        padding: 10px 12px;
+        font-size: 0.92rem;
+      }
+
+      .roster-box {
+        max-height: 540px;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+
+      .roster-box::-webkit-scrollbar { width: 8px; }
+      .roster-box::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.12);
+        border-radius: 8px;
+      }
+
+      .roster-item {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 10px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: 0.16s ease;
+      }
+
+      .roster-item:hover {
+        border-color: rgba(96,214,255,0.8);
+        transform: translateY(-1px);
+      }
+
+      .roster-item.active {
+        background: rgba(96,214,255,0.08);
+        border-color: rgba(96,214,255,0.7);
+        box-shadow: inset 0 0 0 1px rgba(96,214,255,0.24);
+      }
+
+      .roster-name {
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+
+      .roster-meta {
+        color: var(--muted);
+        font-size: 0.74rem;
+        line-height: 1.5;
+      }
+
+      .content {
+        background: rgba(9, 14, 22, 0.96);
+        padding: 18px;
+      }
+
+      .arena-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+      }
+
+      .arena-status {
+        color: var(--muted);
+      }
+
+      .status-pill {
+        border-radius: 999px;
+        padding: 7px 12px;
+        border: 1px solid var(--line);
+        background: rgba(96,214,255,0.08);
+        color: var(--cyan);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-size: 0.72rem;
+      }
+
+      .versus {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 18px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(13, 22, 32, 0.96), rgba(9, 14, 21, 0.96));
+        border-radius: 18px;
+        padding: 18px 14px;
+      }
+
+      .fighter {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 16px;
+        min-height: 120px;
+      }
+
+      .fighter-label {
+        display: inline-block;
+        color: var(--muted);
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .fighter-name {
+        font-size: clamp(1.1rem, 1.8vw, 1.9rem);
+        font-weight: 900;
+        margin-bottom: 6px;
+      }
+
+      .fighter-tier {
+        color: var(--amber);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.74rem;
+      }
+
+      .vs {
+        display: grid;
+        place-items: center;
+        font-size: 1.7rem;
+        font-weight: 900;
+        color: var(--gold);
+      }
+
+      .analysis-box {
+        margin-top: 18px;
+        background: rgba(13, 20, 29, 0.94);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .analysis-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(20, 30, 44, 0.9);
+        border-bottom: 1px solid var(--line);
+        padding: 12px 14px;
+        color: var(--cyan);
+        font-size: 0.74rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .analysis-body {
+        padding: 16px;
+      }
+
+      .input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      label {
+        display: block;
+        color: var(--muted);
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      input, select, textarea {
+        width: 100%;
+        background: rgba(255,255,255,0.02);
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 11px 12px;
+        font-size: 0.96rem;
+      }
+
+      textarea {
+        min-height: 130px;
+        resize: vertical;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
       button {
-        appearance: none; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: white; border-radius: 12px; padding: 14px 12px; cursor: pointer; font-weight: 700; text-align: left;
+        appearance: none;
+        border: 1px solid rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.03);
+        color: var(--text);
+        padding: 11px 16px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        transition: 0.16s ease;
       }
-      button:hover { border-color: rgba(255,183,3,0.7); }
-      .score { margin-top: 14px; padding: 12px; border-radius: 10px; background: rgba(76,201,240,0.08); border: 1px solid rgba(76,201,240,0.25); }
+
+      button:hover { transform: translateY(-1px); }
+      .primary { background: linear-gradient(135deg, var(--cyan), var(--blue)); color: #031018; border: none; }
+      .warn { background: linear-gradient(135deg, rgba(255,183,107,0.2), rgba(255,107,107,0.18)); border-color: rgba(255,183,107,0.4); }
+
+      .response-box {
+        margin-top: 18px;
+        background: rgba(8, 13, 19, 0.95);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+      }
+
+      .response-title {
+        color: var(--gold);
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .response-text {
+        line-height: 1.7;
+        color: #ebf4ff;
+        margin: 0;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .metric {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 10px;
+      }
+
+      .metric-label {
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        font-size: 0.68rem;
+        margin-bottom: 8px;
+      }
+
+      .metric-value {
+        font-size: clamp(1.3rem, 2vw, 2rem);
+        font-weight: 900;
+      }
+
+      .cyan { color: var(--cyan); }
+      .gold { color: var(--gold); }
+      .green { color: var(--green); }
+      .red { color: var(--red); }
+
+      @media (max-width: 980px) {
+        .layout { grid-template-columns: 1fr; }
+        .sidebar { border-right: none; border-bottom: 1px solid var(--line); }
+      }
+
+      @media (max-width: 640px) {
+        .input-row, .metrics, .versus { grid-template-columns: 1fr; }
+        .vs { padding: 8px 0; }
+      }
     </style>
   </head>
   <body>
-    <div class="panel">
-      <h1>PowerScaler Arena</h1>
-      <div class="status" id="status">Arena open. Select the best power-scaling answer.</div>
-      <div class="question" id="question">Question loading...</div>
-      <div class="choices" id="choices"></div>
-      <div class="score" id="score">Score: 0</div>
+    <div class="shell">
+      <div class="topbar">
+        <div class="brand-wrap">
+          <h1 class="title">POWERSCALER PRO</h1>
+          <div class="sub">Cold logic engine / adaptive scaling simulator</div>
+        </div>
+        <div class="chips">
+          <div class="chip" id="rankChip">Rookie Evaluator</div>
+          <div class="chip" id="respectChip">Respect: 0</div>
+          <div class="chip" id="tiltChip">Tilt: 0%</div>
+        </div>
+      </div>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="section-header">Story mode</div>
+          <div class="story-card">
+            <div class="story-title" id="storyTitle">Rookie Evaluator</div>
+            <div class="progress"><div class="progress-bar" id="storyProgressBar"></div></div>
+          </div>
+
+          <div class="section-header">Database</div>
+          <div class="toolbar">
+            <input id="searchInput" type="text" placeholder="Search characters..." />
+          </div>
+          <div id="rosterBox" class="roster-box"></div>
+        </aside>
+
+        <main class="content">
+          <div class="arena-header">
+            <div class="arena-status" id="challengeStatus">Targeting: not assigned</div>
+            <div class="status-pill" id="statusPill">Analytic Mode</div>
+          </div>
+
+          <div class="versus">
+            <div class="fighter">
+              <div class="fighter-label">Your candidate</div>
+              <div class="fighter-name" id="playerName">Candidate</div>
+              <div class="fighter-tier" id="playerTier">Not assigned</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="fighter">
+              <div class="fighter-label">Current benchmark</div>
+              <div class="fighter-name" id="targetName">Benchmark</div>
+              <div class="fighter-tier" id="targetTier">Not assigned</div>
+            </div>
+          </div>
+
+          <div class="analysis-box">
+            <div class="analysis-head">
+              <span>Analysis Console</span>
+              <span id="difficultyTag">Difficulty: 1</span>
+            </div>
+            <div class="analysis-body">
+              <div class="input-row">
+                <div>
+                  <label for="subjectInput">Subject</label>
+                  <input id="subjectInput" type="text" value="Player Character" maxlength="50" />
+                </div>
+                <div>
+                  <label for="targetSelect">Target benchmark</label>
+                  <select id="targetSelect"></select>
+                </div>
+              </div>
+
+              <label for="claimInput">Scaling argument</label>
+              <textarea id="claimInput" placeholder="Explain why your candidate defeats or matches the target using speed, durability, hax, AP, canon, or narrative logic."></textarea>
+
+              <div class="button-row">
+                <button class="primary" id="runBtn">Run analysis</button>
+                <button id="randomBtn">Generate metric</button>
+                <button class="warn" id="pressureBtn">Increase pressure</button>
+                <button id="addCustomBtn">Add custom character</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="response-box">
+            <div class="response-title">Nexus-9 response</div>
+            <p class="response-text" id="responseText">The system is online. Submit a scaling claim and the engine will determine whether your hierarchy survives cold inspection.</p>
+          </div>
+
+          <div class="metrics">
+            <div class="metric">
+              <div class="metric-label">Power</div>
+              <div class="metric-value cyan" id="metricPower">0</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Speed</div>
+              <div class="metric-value gold" id="metricSpeed">0</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Hax</div>
+              <div class="metric-value green" id="metricHax">0</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Durability</div>
+              <div class="metric-value red" id="metricDurability">0</div>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
 
     <script>
-      const debateDeck = [
-        {
-          prompt: 'Who is stronger in a direct high-stakes match: Goku or Zeus?',
-          correct: 'Zeus in pure mythic god-tier scaling, but Goku wins under many anime assumptions and composite scaling.',
-          options: [
-            'Goku in most modern anime scaling',
-            'Zeus in pure mythic god-tier rules',
-            'They are always equal',
-            'Neither; a cosmic entity is above both'
-          ],
-          bestIndex: 1
-        },
-        {
-          prompt: 'Between Thor and Superman, who usually scales higher in broad mainstream comics?',
-          correct: 'Superman usually scales higher in mainstream comics, while Thor can rival or exceed him in specific mythic contexts.',
-          options: [
-            'Thor in every canon',
-            'Superman in most mainstream comics',
-            'They are always equal',
-            'Neither has enough feats'
-          ],
-          bestIndex: 1
-        },
-        {
-          prompt: 'If Hades and Madara battle under equal conditions, who is more dangerous?',
-          correct: 'Madara is more dangerous for raw destructive output, while Hades is terrifying for mythic god-level authority and battlefield control.',
-          options: [
-            'Madara by raw destructive output',
-            'Hades by mythic control and dominance',
-            'Both are exactly equal',
-            'Neither; a void entity is above both'
-          ],
-          bestIndex: 0
-        },
-        {
-          prompt: 'Which fighter is more strategically dangerous in a long battle: Odin or Gojo?',
-          correct: 'Odin is generally stronger when you include long-form strategic and mythic battlefield control, while Gojo wins in raw precision and reaction speed.',
-          options: [
-            'Odin by strategic command and mythic experience',
-            'Gojo by raw reaction speed and precision',
-            'They are equal in all aspects',
-            'Hulk is better in a long battle'
-          ],
-          bestIndex: 0
-        },
-        {
-          prompt: 'Between Kareem Abdul-Jabbar and LeBron James, who is the more complete all-around player in basketball history?',
-          correct: 'LeBron is the more complete modern-era all-around player, while Kareem is more dominant in pure scoring and post-game craft.',
-          options: [
-            'Kareem is the more complete purely historical player',
-            'LeBron is the more complete all-around modern player',
-            'They are equal',
-            'Neither is above Jordan'
-          ],
-          bestIndex: 1
-        }
+      const baseRoster = [
+        { name: "Goku", verse: "Dragon Ball", tier: "Universal-High", stats: { power: 98, speed: 99, hax: 88, durability: 97, intelligence: 68, narrative: 89 }, descriptor: "Saiyan prodigy with absurd scaling and god-tier adaptation." },
+        { name: "Vegeta", verse: "Dragon Ball", tier: "Universal-High", stats: { power: 97, speed: 97, hax: 74, durability: 96, intelligence: 78, narrative: 83 }, descriptor: "Elite tactical warrior with ruthless output and refinement." },
+        { name: "Beerus", verse: "Dragon Ball", tier: "Godly-Universal", stats: { power: 96, speed: 99, hax: 92, durability: 95, intelligence: 88, narrative: 91 }, descriptor: "God of Destruction with immense cosmological authority." },
+        { name: "Jiren", verse: "Dragon Ball", tier: "Universal", stats: { power: 98, speed: 94, hax: 62, durability: 97, intelligence: 70, narrative: 75 }, descriptor: "Pure brute-force apex combatant." },
+        { name: "Broly", verse: "Dragon Ball", tier: "Universal", stats: { power: 98, speed: 93, hax: 60, durability: 98, intelligence: 56, narrative: 74 }, descriptor: "Massive destructive output and brutal resilience." },
+        { name: "Frieza", verse: "Dragon Ball", tier: "Universal", stats: { power: 95, speed: 93, hax: 82, durability: 93, intelligence: 92, narrative: 82 }, descriptor: "Cold, methodical, devastatingly efficient." },
+        { name: "Whis", verse: "Dragon Ball", tier: "Transcendent", stats: { power: 90, speed: 99, hax: 98, durability: 90, intelligence: 97, narrative: 94 }, descriptor: "Celestial master with absurd temporal and spatial manipulation." },
+
+        { name: "Monkey D. Luffy", verse: "One Piece", tier: "Multiversal", stats: { power: 95, speed: 89, hax: 93, durability: 90, intelligence: 68, narrative: 94 }, descriptor: "Willpower and devil fruit authority that can rewrite expectations." },
+        { name: "Zoro", verse: "One Piece", tier: "Multiversal", stats: { power: 94, speed: 92, hax: 78, durability: 90, intelligence: 70, narrative: 83 }, descriptor: "Elite swordsman with relentless adaptation and absurd output." },
+        { name: "Kaido", verse: "One Piece", tier: "Multiversal", stats: { power: 99, speed: 82, hax: 82, durability: 99, intelligence: 72, narrative: 88 }, descriptor: "Dragon emperor with apocalyptic endurance." },
+        { name: "Big Mom", verse: "One Piece", tier: "Multiversal", stats: { power: 93, speed: 80, hax: 90, durability: 94, intelligence: 88, narrative: 84 }, descriptor: "A terrifying battlefield sovereign with oppressive domain logic." },
+        { name: "Shanks", verse: "One Piece", tier: "Multiversal", stats: { power: 94, speed: 95, hax: 86, durability: 93, intelligence: 90, narrative: 90 }, descriptor: "Calm but overwhelming top-tier force." },
+        { name: "Blackbeard", verse: "One Piece", tier: "Multiversal", stats: { power: 95, speed: 84, hax: 96, durability: 90, intelligence: 91, narrative: 88 }, descriptor: "Power-harvesting manipulator with enormous strategic potential." },
+
+        { name: "Naruto Uzumaki", verse: "Naruto", tier: "Universal", stats: { power: 96, speed: 93, hax: 95, durability: 95, intelligence: 78, narrative: 91 }, descriptor: "Nine-tails host with massive output and reality-bending techniques." },
+        { name: "Sasuke Uchiha", verse: "Naruto", tier: "Universal", stats: { power: 95, speed: 98, hax: 92, durability: 91, intelligence: 87, narrative: 87 }, descriptor: "Powerful dojutsu wielder with precision and speed." },
+        { name: "Madara Uchiha", verse: "Naruto", tier: "Planetary-Universal", stats: { power: 97, speed: 94, hax: 96, durability: 98, intelligence: 92, narrative: 91 }, descriptor: "A warlord with elite hax and massive battlefield control." },
+        { name: "Kaguya Otsutsuki", verse: "Naruto", tier: "Universal-High", stats: { power: 99, speed: 92, hax: 99, durability: 98, intelligence: 87, narrative: 97 }, descriptor: "Cosmic-level threat whose power destabilizes entire realities." },
+        { name: "Pain", verse: "Naruto", tier: "Planetary-Universal", stats: { power: 93, speed: 88, hax: 89, durability: 91, intelligence: 85, narrative: 81 }, descriptor: "A tactical menace with destructive payload and force density." },
+        { name: "Minato Namikaze", verse: "Naruto", tier: "Universal", stats: { power: 91, speed: 99, hax: 84, durability: 87, intelligence: 82, narrative: 85 }, descriptor: "The speed benchmark of the series." },
+
+        { name: "Ichigo Kurosaki", verse: "Bleach", tier: "Universal", stats: { power: 95, speed: 95, hax: 89, durability: 92, intelligence: 77, narrative: 87 }, descriptor: "Hybrid combatant with powerful spiritual weapons and transformation." },
+        { name: "Byakuya Kuchiki", verse: "Bleach", tier: "Universal", stats: { power: 91, speed: 91, hax: 82, durability: 89, intelligence: 80, narrative: 81 }, descriptor: "Elegant threat with layered control and precision." },
+        { name: "Hitsugaya", verse: "Bleach", tier: "Universal", stats: { power: 90, speed: 96, hax: 79, durability: 87, intelligence: 82, narrative: 81 }, descriptor: "Rapid, precise, and highly oppressive in tempo." },
+        { name: "Yhwach", verse: "Bleach", tier: "Multiversal", stats: { power: 98, speed: 94, hax: 99, durability: 97, intelligence: 93, narrative: 93 }, descriptor: "Sovereign of the final world and a reality-level authority." },
+        { name: "Aizen Sosuke", verse: "Bleach", tier: "Multiversal", stats: { power: 96, speed: 93, hax: 99, durability: 95, intelligence: 98, narrative: 90 }, descriptor: "Master manipulator and catastrophic hax user." },
+        { name: "Kenpachi Zaraki", verse: "Bleach", tier: "Universal", stats: { power: 98, speed: 85, hax: 63, durability: 99, intelligence: 59, narrative: 76 }, descriptor: "Brutal power monster and endurance freak." },
+
+        { name: "Gojo Satoru", verse: "Jujutsu Kaisen", tier: "High-Universal", stats: { power: 93, speed: 99, hax: 98, durability: 91, intelligence: 89, narrative: 88 }, descriptor: "Almost impossible to pressure due to perception and domain control." },
+        { name: "Ryomen Sukuna", verse: "Jujutsu Kaisen", tier: "High-Universal", stats: { power: 99, speed: 94, hax: 98, durability: 99, intelligence: 87, narrative: 92 }, descriptor: "Cursed king with brutal power and elite authority." },
+        { name: "Yuji Itadori", verse: "Jujutsu Kaisen", tier: "Universal", stats: { power: 92, speed: 91, hax: 80, durability: 90, intelligence: 74, narrative: 84 }, descriptor: "A volatile combatant with plenty of growth." },
+        { name: "Toji Fushiguro", verse: "Jujutsu Kaisen", tier: "High-Universal", stats: { power: 91, speed: 97, hax: 67, durability: 93, intelligence: 79, narrative: 73 }, descriptor: "A precision specialist whose speed is absurd." },
+        { name: "Megumi Fushiguro", verse: "Jujutsu Kaisen", tier: "Universal", stats: { power: 89, speed: 89, hax: 86, durability: 85, intelligence: 83, narrative: 75 }, descriptor: "Tactical domain user with a sharp scaling profile." },
+
+        { name: "Asta", verse: "Black Clover", tier: "Universal", stats: { power: 94, speed: 89, hax: 88, durability: 90, intelligence: 71, narrative: 83 }, descriptor: "Relentless growth and anti-magic devastation." },
+        { name: "Yuno", verse: "Black Clover", tier: "Universal", stats: { power: 93, speed: 92, hax: 90, durability: 89, intelligence: 83, narrative: 81 }, descriptor: "Calm prodigy with elite magical control." },
+        { name: "Lucifero", verse: "Black Clover", tier: "Multiversal", stats: { power: 98, speed: 86, hax: 97, durability: 96, intelligence: 79, narrative: 89 }, descriptor: "A demonic apex with cataclysmic authority." },
+        { name: "Mereoleona", verse: "Black Clover", tier: "Universal", stats: { power: 97, speed: 93, hax: 74, durability: 92, intelligence: 74, narrative: 81 }, descriptor: "Brutal, explosive, and intense." },
+
+        { name: "Eren Yeager", verse: "Attack on Titan", tier: "Universal", stats: { power: 97, speed: 86, hax: 96, durability: 95, intelligence: 75, narrative: 93 }, descriptor: "World-ending variable with severe conceptual pressure." },
+        { name: "Levi Ackerman", verse: "Attack on Titan", tier: "Universal", stats: { power: 89, speed: 98, hax: 73, durability: 83, intelligence: 89, narrative: 81 }, descriptor: "Precision and tactical force that can overwhelm physically." },
+        { name: "Mikasa Ackerman", verse: "Attack on Titan", tier: "Universal", stats: { power: 90, speed: 96, hax: 71, durability: 83, intelligence: 73, narrative: 79 }, descriptor: "Elite swordsmanship and relentless pressure." },
+        { name: "Zeke Yeager", verse: "Attack on Titan", tier: "Universal", stats: { power: 91, speed: 81, hax: 89, durability: 88, intelligence: 85, narrative: 85 }, descriptor: "A powerful strategic manipulator." },
+
+        { name: "Saitama", verse: "One Punch Man", tier: "Universe-Scaling", stats: { power: 99, speed: 99, hax: 60, durability: 99, intelligence: 42, narrative: 82 }, descriptor: "Overwhelming physically with absurdly high power floors." },
+        { name: "Genos", verse: "One Punch Man", tier: "Universal", stats: { power: 87, speed: 85, hax: 64, durability: 88, intelligence: 87, narrative: 63 }, descriptor: "Mechanical powerhouse and elite fighter." },
+        { name: "Garou", verse: "One Punch Man", tier: "Universal", stats: { power: 93, speed: 93, hax: 63, durability: 91, intelligence: 77, narrative: 69 }, descriptor: "Monster hunter with brutal momentum and adaptability." },
+
+        { name: "Sung Jin-Woo", verse: "Solo Leveling", tier: "High-Universal", stats: { power: 97, speed: 97, hax: 93, durability: 96, intelligence: 79, narrative: 90 }, descriptor: "Shadow sovereign with extreme battlefield growth." },
+        { name: "Beru", verse: "Solo Leveling", tier: "High-Universal", stats: { power: 95, speed: 96, hax: 78, durability: 93, intelligence: 72, narrative: 73 }, descriptor: "Massive pressure and overwhelming offense." },
+
+        { name: "Spider-Man", verse: "Marvel Comics", tier: "City-Planetary", stats: { power: 77, speed: 91, hax: 66, durability: 81, intelligence: 86, narrative: 78 }, descriptor: "Street-level legend with surprising scaling and elite reaction speed." },
+        { name: "Hulk", verse: "Marvel Comics", tier: "Planetary-Universal", stats: { power: 98, speed: 77, hax: 55, durability: 99, intelligence: 50, narrative: 83 }, descriptor: "A raw force engine with monstrous resilience." },
+        { name: "Thor", verse: "Marvel Comics", tier: "Godly-Universal", stats: { power: 96, speed: 95, hax: 90, durability: 97, intelligence: 83, narrative: 92 }, descriptor: "Mythic lightning-empowered god of colossal combat weight." },
+        { name: "Odin", verse: "Marvel Comics", tier: "Godly-Universal", stats: { power: 98, speed: 91, hax: 97, durability: 98, intelligence: 96, narrative: 95 }, descriptor: "All-Father with mythic authority and cosmic command." },
+        { name: "Doctor Strange", verse: "Marvel Comics", tier: "Multiversal", stats: { power: 91, speed: 87, hax: 99, durability: 79, intelligence: 97, narrative: 89 }, descriptor: "Reality-bending dimension manipulator and tactical wizard." },
+        { name: "Scarlet Witch", verse: "Marvel Comics", tier: "Multiversal", stats: { power: 97, speed: 84, hax: 99, durability: 76, intelligence: 80, narrative: 93 }, descriptor: "Probability and reality warping on a massive scale." },
+        { name: "Sentry", verse: "Marvel Comics", tier: "Multiversal", stats: { power: 99, speed: 94, hax: 69, durability: 99, intelligence: 71, narrative: 92 }, descriptor: "Almost absurd raw power serialization." },
+        { name: "Thanos", verse: "Marvel Comics", tier: "Multiversal", stats: { power: 98, speed: 89, hax: 84, durability: 98, intelligence: 91, narrative: 93 }, descriptor: "Cosmological conqueror with elite strategy and pressure." },
+        { name: "Wanda Maximoff", verse: "Marvel Comics", tier: "Multiversal", stats: { power: 96, speed: 83, hax: 99, durability: 75, intelligence: 80, narrative: 92 }, descriptor: "Reality warping authority in explosive output form." },
+        { name: "Captain Marvel", verse: "Marvel Comics", tier: "Planetary-Universal", stats: { power: 93, speed: 95, hax: 72, durability: 92, intelligence: 78, narrative: 86 }, descriptor: "Heroic cosmic energy user with broad scaling." },
+
+        { name: "Superman", verse: "DC Comics", tier: "Planetary-Universal", stats: { power: 95, speed: 97, hax: 66, durability: 99, intelligence: 83, narrative: 92 }, descriptor: "A foundational icon with absurd endurance and speed." },
+        { name: "Batman", verse: "DC Comics", tier: "City-Planetary", stats: { power: 63, speed: 71, hax: 50, durability: 66, intelligence: 99, narrative: 87 }, descriptor: "A tactical monster whose preparation and adaptability are terrifying." },
+        { name: "Wonder Woman", verse: "DC Comics", tier: "Planetary-Universal", stats: { power: 91, speed: 89, hax: 75, durability: 94, intelligence: 83, narrative: 91 }, descriptor: "Mythic warrior and combat specialist." },
+        { name: "Flash", verse: "DC Comics", tier: "Universal", stats: { power: 76, speed: 99, hax: 82, durability: 73, intelligence: 81, narrative: 87 }, descriptor: "The speed benchmark of DC's top-end cosmology." },
+        { name: "Darkseid", verse: "DC Comics", tier: "Multiversal", stats: { power: 97, speed: 88, hax: 92, durability: 98, intelligence: 90, narrative: 93 }, descriptor: "Apocalyptic tyrant with cosmic command and pressure." },
+        { name: "Doctor Manhattan", verse: "DC Comics", tier: "Multiversal", stats: { power: 96, speed: 96, hax: 99, durability: 97, intelligence: 95, narrative: 94 }, descriptor: "Reality-engineering force with scientific authority." },
+        { name: "Anti-Monitor", verse: "DC Comics", tier: "Multiversal", stats: { power: 99, speed: 91, hax: 97, durability: 99, intelligence: 83, narrative: 96 }, descriptor: "A cosmic collapse engine with widespread destructive output." },
+        { name: "Green Lantern", verse: "DC Comics", tier: "Planetary-Universal", stats: { power: 88, speed: 84, hax: 92, durability: 82, intelligence: 86, narrative: 82 }, descriptor: "Energy manipulation at a broad and flexible scale." },
+
+        { name: "Darth Vader", verse: "Star Wars", tier: "Planetary-Stellar", stats: { power: 89, speed: 78, hax: 68, durability: 91, intelligence: 81, narrative: 83 }, descriptor: "Force-heavy duelist with immense pressure." },
+        { name: "Luke Skywalker", verse: "Star Wars", tier: "Planetary-Stellar", stats: { power: 90, speed: 87, hax: 72, durability: 83, intelligence: 76, narrative: 86 }, descriptor: "Highly adaptive Jedi whose growth is dangerous." },
+        { name: "Yoda", verse: "Star Wars", tier: "Stellar-Universal", stats: { power: 87, speed: 83, hax: 88, durability: 83, intelligence: 96, narrative: 91 }, descriptor: "Master manipulator with deep force authority." },
+        { name: "Palpatine", verse: "Star Wars", tier: "Stellar-Universal", stats: { power: 95, speed: 83, hax: 99, durability: 90, intelligence: 98, narrative: 95 }, descriptor: "Master of manipulation and force-level corruption." },
+
+        { name: "Kratos", verse: "God of War", tier: "Godly", stats: { power: 95, speed: 86, hax: 80, durability: 95, intelligence: 75, narrative: 89 }, descriptor: "Brutal god-killer with immense combat lethality." },
+        { name: "Zeus", verse: "Greek Mythology", tier: "Godly-Universal", stats: { power: 97, speed: 89, hax: 91, durability: 96, intelligence: 89, narrative: 93 }, descriptor: "King of the gods and a mythic authority benchmark." },
+        { name: "Hades", verse: "Greek Mythology", tier: "Godly", stats: { power: 91, speed: 80, hax: 83, durability: 92, intelligence: 86, narrative: 85 }, descriptor: "Dark god with domain authority and elite metaphorical control." },
+        { name: "Shiva", verse: "Hindu Mythology", tier: "Godly-Universal", stats: { power: 98, speed: 91, hax: 93, durability: 97, intelligence: 80, narrative: 91 }, descriptor: "A cosmic destroyer with mythic authority and devastation." },
+        { name: "Vishnu", verse: "Hindu Mythology", tier: "Transcendent", stats: { power: 99, speed: 92, hax: 99, durability: 99, intelligence: 93, narrative: 98 }, descriptor: "A preservation deity whose scale exceeds baseline comparison." },
+        { name: "Odin", verse: "Norse Mythology", tier: "Godly", stats: { power: 94, speed: 88, hax: 91, durability: 93, intelligence: 95, narrative: 92 }, descriptor: "Wise ruler with strategic and cosmic authority." },
+
+        { name: "Rimuru Tempest", verse: "That Time I Got Reincarnated as a Slime", tier: "Universal", stats: { power: 94, speed: 89, hax: 97, durability: 92, intelligence: 91, narrative: 89 }, descriptor: "Adaptive tyrant with absurd evolution and control layers." },
+        { name: "Arceus", verse: "Pokemon", tier: "Cosmic", stats: { power: 99, speed: 93, hax: 99, durability: 99, intelligence: 95, narrative: 96 }, descriptor: "Creation deity of the Pokémon cosmology." },
+        { name: "Mewtwo", verse: "Pokemon", tier: "Planetary-Universal", stats: { power: 96, speed: 93, hax: 89, durability: 90, intelligence: 93, narrative: 83 }, descriptor: "Psychic monster with high-end scaling and elite adaptability." },
+        { name: "Pikachu", verse: "Pokemon", tier: "Planetary", stats: { power: 60, speed: 82, hax: 65, durability: 58, intelligence: 66, narrative: 70 }, descriptor: "Cute but not a cosmic threat." },
+
+        { name: "Doom Slayer", verse: "Doom", tier: "Planetary-Universal", stats: { power: 97, speed: 85, hax: 81, durability: 99, intelligence: 71, narrative: 81 }, descriptor: "Relentless demonic executioner with survival beyond logic." },
+        { name: "Master Chief", verse: "Halo", tier: "Planetary-Stellar", stats: { power: 87, speed: 83, hax: 61, durability: 89, intelligence: 81, narrative: 79 }, descriptor: "Elite soldier with strong tactical worth." },
+        { name: "Sonic", verse: "Sonic", tier: "Planetary-Universal", stats: { power: 81, speed: 99, hax: 77, durability: 79, intelligence: 71, narrative: 81 }, descriptor: "Velocity benchmark with broad mobility and chaos energy." },
+        { name: "Mario", verse: "Nintendo", tier: "Planetary", stats: { power: 73, speed: 80, hax: 69, durability: 77, intelligence: 71, narrative: 83 }, descriptor: "Iconic platform hero with broad franchise-level feats." },
+        { name: "Link", verse: "The Legend of Zelda", tier: "Planetary", stats: { power: 75, speed: 72, hax: 85, durability: 79, intelligence: 81, narrative: 85 }, descriptor: "Mythic adventurer whose relics and courage matter." },
+        { name: "Cloud Strife", verse: "Final Fantasy", tier: "Planetary", stats: { power: 79, speed: 77, hax: 74, durability: 81, intelligence: 73, narrative: 81 }, descriptor: "Efficient swordsman and high-tier warrior." },
+        { name: "Sephiroth", verse: "Final Fantasy", tier: "Planetary-Universal", stats: { power: 97, speed: 93, hax: 86, durability: 91, intelligence: 87, narrative: 91 }, descriptor: "Perfect warrior with monstrous aura and range." },
+        { name: "Kirby", verse: "Nintendo", tier: "Planetary", stats: { power: 73, speed: 76, hax: 95, durability: 71, intelligence: 57, narrative: 79 }, descriptor: "Absurdly flexible and dangerous by needlessly weird means." },
+
+        { name: "Lelouch", verse: "Code Geass", tier: "Multiversal", stats: { power: 79, speed: 69, hax: 96, durability: 63, intelligence: 99, narrative: 87 }, descriptor: "A tactic-obsessed manipulator whose authority is near-total." },
+        { name: "Reinhard", verse: "Re:Zero", tier: "Universal", stats: { power: 98, speed: 93, hax: 95, durability: 97, intelligence: 91, narrative: 91 }, descriptor: "A godlike peer with monstrous output and narrative authority." },
+        { name: "Light Yagami", verse: "Death Note", tier: "Multiversal", stats: { power: 79, speed: 63, hax: 99, durability: 53, intelligence: 99, narrative: 86 }, descriptor: "A true manipulator of systems and destiny." },
+        { name: "Gandalf", verse: "The Lord of the Rings", tier: "Mythic", stats: { power: 85, speed: 73, hax: 91, durability: 81, intelligence: 95, narrative: 87 }, descriptor: "Wisdom and force at the mythic level." },
+        { name: "Sauron", verse: "The Lord of the Rings", tier: "Mythic-Universal", stats: { power: 91, speed: 74, hax: 93, durability: 88, intelligence: 96, narrative: 91 }, descriptor: "A symbol of oppressive strategic and metaphysical dominance." },
+
+        { name: "Invincible", verse: "Invincible", tier: "Planetary-Universal", stats: { power: 94, speed: 90, hax: 72, durability: 96, intelligence: 78, narrative: 88 }, descriptor: "A hyper-competent superhero with absurd scaling and relentless growth." },
+        { name: "Omni-Man", verse: "Invincible", tier: "Planetary-Universal", stats: { power: 96, speed: 92, hax: 80, durability: 97, intelligence: 83, narrative: 90 }, descriptor: "Powerful Viltrumite whose force is extraordinary." },
+        { name: "Allen Walker", verse: "D.Gray-man", tier: "Universal", stats: { power: 89, speed: 88, hax: 84, durability: 82, intelligence: 78, narrative: 75 }, descriptor: "A battle-focused exorcist with dangerous output and control." },
+        { name: "Natsu Dragneel", verse: "Fairy Tail", tier: "Universal", stats: { power: 94, speed: 85, hax: 86, durability: 90, intelligence: 69, narrative: 80 }, descriptor: "Fiery dragon slayer with high-end destructive potential." },
+        { name: "Erza Scarlet", verse: "Fairy Tail", tier: "Universal", stats: { power: 92, speed: 84, hax: 78, durability: 92, intelligence: 79, narrative: 82 }, descriptor: "A massive combatant with admirable versatility." },
+        { name: "Laxus Dreyar", verse: "Fairy Tail", tier: "Universal", stats: { power: 90, speed: 87, hax: 76, durability: 88, intelligence: 74, narrative: 74 }, descriptor: "A lightning-user with high pressure and battlefield dominance." },
+
+        { name: "Rick Sanchez", verse: "Rick and Morty", tier: "Multiversal", stats: { power: 99, speed: 99, hax: 99, durability: 98, intelligence: 99, narrative: 98 }, descriptor: "Mad scientist whose output is ethically unstable and cosmically powerful." },
+        { name: "Morty Smith", verse: "Rick and Morty", tier: "Multiversal", stats: { power: 58, speed: 62, hax: 42, durability: 60, intelligence: 52, narrative: 65 }, descriptor: "Not a threat by default, but at least he survives in bizarre conditions." },
+        { name: "Birdperson", verse: "Rick and Morty", tier: "Multiversal", stats: { power: 80, speed: 85, hax: 77, durability: 82, intelligence: 81, narrative: 79 }, descriptor: "A high-level but grounded multiversal combatant." },
+
+        { name: "The Flash", verse: "Arrowverse", tier: "Universal", stats: { power: 81, speed: 99, hax: 83, durability: 79, intelligence: 82, narrative: 84 }, descriptor: "The cosmic speed benchmark of the live-action dimension." },
+        { name: "Green Arrow", verse: "Arrowverse", tier: "Planetary", stats: { power: 65, speed: 70, hax: 50, durability: 66, intelligence: 85, narrative: 70 }, descriptor: "Highly skilled and strategic, but not a cosmic-scale threat." },
+        { name: "Superman Prime", verse: "DC Comics", tier: "Multiversal", stats: { power: 99, speed: 99, hax: 94, durability: 99, intelligence: 90, narrative: 98 }, descriptor: "A peak cosmic version of the emblematic hero." },
+
+        { name: "Wolverine", verse: "Marvel Comics", tier: "Planetary", stats: { power: 82, speed: 77, hax: 52, durability: 91, intelligence: 64, narrative: 82 }, descriptor: "A ferocious fighter with absurd healing and unrelenting pressure." },
+        { name: "Deadpool", verse: "Marvel Comics", tier: "Planetary", stats: { power: 78, speed: 80, hax: 67, durability: 85, intelligence: 72, narrative: 79 }, descriptor: "A wild-card with regeneration and chaotic unpredictability." },
+        { name: "Iron Man", verse: "Marvel Comics", tier: "Planetary", stats: { power: 78, speed: 70, hax: 71, durability: 70, intelligence: 98, narrative: 85 }, descriptor: "Elite inventor and weaponized genius." },
+        { name: "Captain America", verse: "Marvel Comics", tier: "Planetary", stats: { power: 80, speed: 69, hax: 58, durability: 81, intelligence: 84, narrative: 83 }, descriptor: "A disciplined warrior with a deeply respectable ceiling." },
+        { name: "Spider-Man 2099", verse: "Marvel Comics", tier: "Planetary", stats: { power: 76, speed: 90, hax: 68, durability: 79, intelligence: 82, narrative: 71 }, descriptor: "A high-speed, adaptable future version of the classic hero." },
+
+        { name: "Daredevil", verse: "Marvel Comics", tier: "City-Planetary", stats: { power: 72, speed: 86, hax: 62, durability: 75, intelligence: 84, narrative: 72 }, descriptor: "Elite sensory and combat control." },
+        { name: "The Punisher", verse: "Marvel Comics", tier: "City-Planetary", stats: { power: 70, speed: 68, hax: 52, durability: 69, intelligence: 75, narrative: 70 }, descriptor: "Resilient, tactical, and wildly dangerous in a specific context." },
+
+        { name: "Harley Quinn", verse: "DC Comics", tier: "City-Planetary", stats: { power: 63, speed: 70, hax: 50, durability: 66, intelligence: 76, narrative: 70 }, descriptor: "Unpredictable, chaotic, and surprisingly resilient." },
+        { name: "Batman Beyond", verse: "DC Comics", tier: "City-Planetary", stats: { power: 64, speed: 73, hax: 52, durability: 68, intelligence: 96, narrative: 69 }, descriptor: "Future-tech genius and elite combatant." },
+        { name: "Aquaman", verse: "DC Comics", tier: "Planetary", stats: { power: 82, speed: 68, hax: 72, durability: 84, intelligence: 74, narrative: 79 }, descriptor: "Underwater god with broad logical pressure." },
+
+        { name: "Guts", verse: "Berserk", tier: "Universal", stats: { power: 94, speed: 88, hax: 74, durability: 96, intelligence: 70, narrative: 88 }, descriptor: "Brutal, relentless, and dangerously durable." },
+        { name: "Griffith", verse: "Berserk", tier: "Universal", stats: { power: 92, speed: 86, hax: 88, durability: 90, intelligence: 91, narrative: 88 }, descriptor: "A terrifying manipulator with elite paranormal authority." },
+        { name: "Caspian", verse: "The Chronicles of Narnia", tier: "Mythic", stats: { power: 72, speed: 71, hax: 64, durability: 74, intelligence: 73, narrative: 74 }, descriptor: "A mythic royal and battlefield leader." },
+
+        { name: "Hercules", verse: "Greek Mythology", tier: "Godly", stats: { power: 92, speed: 82, hax: 78, durability: 90, intelligence: 72, narrative: 85 }, descriptor: "A mythic hero whose strength is immense." },
+        { name: "Achilles", verse: "Greek Mythology", tier: "Godly", stats: { power: 90, speed: 87, hax: 72, durability: 88, intelligence: 75, narrative: 82 }, descriptor: "Mythic combat specialist, resilient and frightening." },
+        { name: "Odysseus", verse: "Greek Mythology", tier: "Mythic", stats: { power: 76, speed: 74, hax: 68, durability: 72, intelligence: 91, narrative: 81 }, descriptor: "Tactical and cunning beyond standard warrior assumptions." },
+        { name: "Loki", verse: "Norse Mythology", tier: "Godly", stats: { power: 88, speed: 86, hax: 90, durability: 82, intelligence: 91, narrative: 89 }, descriptor: "Trickster god with illusion and causality-level mischief." },
+
+        { name: "Alucard", verse: "Castlevania", tier: "Universal", stats: { power: 90, speed: 89, hax: 88, durability: 94, intelligence: 86, narrative: 84 }, descriptor: "Ancient vampire lord with absurd power and control." },
+        { name: "Simon Belmont", verse: "Castlevania", tier: "Planetary", stats: { power: 74, speed: 76, hax: 71, durability: 77, intelligence: 79, narrative: 74 }, descriptor: "A classic monster hunter with high competence." },
+
+        { name: "Aang", verse: "Avatar: The Last Airbender", tier: "Planetary", stats: { power: 82, speed: 79, hax: 84, durability: 73, intelligence: 88, narrative: 84 }, descriptor: "A very dangerous sky-bender with high-end mobility and energy control." },
+        { name: "Zuko", verse: "Avatar: The Last Airbender", tier: "Planetary", stats: { power: 80, speed: 76, hax: 75, durability: 78, intelligence: 80, narrative: 79 }, descriptor: "A highly adaptive and disciplined firebender." },
+        { name: "Azula", verse: "Avatar: The Last Airbender", tier: "Planetary", stats: { power: 84, speed: 85, hax: 79, durability: 72, intelligence: 89, narrative: 81 }, descriptor: "A tactical prodigy whose pressure is dangerous." },
+
+        { name: "Jin Mori", verse: "The God of High School", tier: "Universal", stats: { power: 95, speed: 95, hax: 82, durability: 94, intelligence: 73, narrative: 84 }, descriptor: "A combatant whose immense speed and force are notoriously scary." },
+        { name: "Mikey", verse: "Tokyo Revengers", tier: "Planetary", stats: { power: 75, speed: 78, hax: 65, durability: 72, intelligence: 66, narrative: 70 }, descriptor: "A street-level powerhouse with good momentum." },
+        { name: "Luffy Gear 5", verse: "One Piece", tier: "Transcendent", stats: { power: 99, speed: 99, hax: 99, durability: 99, intelligence: 84, narrative: 99 }, descriptor: "A reality-bending form that violates normal conventional logic." },
+
+        { name: "Saitama Monster Form", verse: "One Punch Man", tier: "Universe-Scaling", stats: { power: 99, speed: 99, hax: 70, durability: 99, intelligence: 45, narrative: 84 }, descriptor: "The absurdity of scale made manifest." },
+        { name: "Deku", verse: "My Hero Academia", tier: "Universal", stats: { power: 90, speed: 92, hax: 86, durability: 83, intelligence: 78, narrative: 84 }, descriptor: "A symbol of growth, resilience, and dangerous adaptation." },
+        { name: "Bakugo", verse: "My Hero Academia", tier: "Universal", stats: { power: 88, speed: 89, hax: 72, durability: 82, intelligence: 80, narrative: 80 }, descriptor: "A focused and explosive combatant." },
+        { name: "All Might", verse: "My Hero Academia", tier: "Universal", stats: { power: 96, speed: 88, hax: 69, durability: 96, intelligence: 78, narrative: 90 }, descriptor: "A heroic cornerstone with massive force." },
+        { name: "Shigaraki", verse: "My Hero Academia", tier: "Universal", stats: { power: 92, speed: 80, hax: 90, durability: 89, intelligence: 81, narrative: 86 }, descriptor: "A terrifying arch-villain with dangerous decay logic." },
+
+        { name: "Muzan Kibutsuji", verse: "Demon Slayer", tier: "Universal", stats: { power: 97, speed: 93, hax: 94, durability: 96, intelligence: 88, narrative: 91 }, descriptor: "A monstrous demon king with elite destruction and adaptation." },
+        { name: "Rengoku", verse: "Demon Slayer", tier: "Universal", stats: { power: 92, speed: 90, hax: 73, durability: 88, intelligence: 76, narrative: 80 }, descriptor: "Elite flame-user with devastating offense." },
+        { name: "Tanjiro Kamado", verse: "Demon Slayer", tier: "Universal", stats: { power: 90, speed: 92, hax: 86, durability: 86, intelligence: 76, narrative: 85 }, descriptor: "A physically impressive and adaptively dangerous combatant." },
+
+        { name: "Roronoa Zoro (Enma Slash)", verse: "One Piece", tier: "Multiversal", stats: { power: 96, speed: 94, hax: 82, durability: 91, intelligence: 70, narrative: 85 }, descriptor: "A variant of one of the strongest swordsmen in fiction." },
+        { name: "Jinwoo Shadow Sovereign", verse: "Solo Leveling", tier: "High-Universal", stats: { power: 98, speed: 98, hax: 95, durability: 97, intelligence: 82, narrative: 92 }, descriptor: "An evolution of the shadow system into near-total control." },
+
+        { name: "Deku (One For All 100%)", verse: "My Hero Academia", tier: "Universal", stats: { power: 97, speed: 96, hax: 90, durability: 90, intelligence: 82, narrative: 90 }, descriptor: "A peak of heroism and power output." },
+        { name: "Merlin", verse: "Arthurian Mythology", tier: "Mythic", stats: { power: 82, speed: 80, hax: 88, durability: 76, intelligence: 97, narrative: 84 }, descriptor: "A legendary magical advisor with intense intelligence and lore-weight." },
+        { name: "Arthur Pendragon", verse: "Arthurian Mythology", tier: "Mythic", stats: { power: 88, speed: 81, hax: 76, durability: 86, intelligence: 82, narrative: 82 }, descriptor: "A mythic king with strong battlefield authority." },
+
+        { name: "Mighty Thor", verse: "Marvel Comics", tier: "Godly-Universal", stats: { power: 99, speed: 97, hax: 96, durability: 99, intelligence: 86, narrative: 96 }, descriptor: "A kinetic, mythic incarnation of ultimate power." },
+        { name: "Mighty Odin", verse: "Marvel Comics", tier: "Godly-Universal", stats: { power: 99, speed: 94, hax: 99, durability: 99, intelligence: 98, narrative: 98 }, descriptor: "A near-absolute ruler." },
+        { name: "Fate/Zero Saber", verse: "Fate", tier: "Planetary", stats: { power: 86, speed: 84, hax: 76, durability: 82, intelligence: 75, narrative: 80 }, descriptor: "A classical heroic blade specialist." },
+        { name: "Gilgamesh", verse: "Fate", tier: "Planetary-Universal", stats: { power: 95, speed: 87, hax: 92, durability: 89, intelligence: 94, narrative: 90 }, descriptor: "A legendary king of treasure and impossible arsenal." },
+        { name: "Ishtar", verse: "Fate", tier: "Planetary-Universal", stats: { power: 88, speed: 82, hax: 90, durability: 86, intelligence: 85, narrative: 83 }, descriptor: "A goddess-tier power user with destructive force." },
+
+        { name: "The Joker", verse: "DC Comics", tier: "City-Planetary", stats: { power: 60, speed: 60, hax: 65, durability: 55, intelligence: 97, narrative: 70 }, descriptor: "A manipulator, not a raw power engine." },
+        { name: "Lex Luthor", verse: "DC Comics", tier: "City-Planetary", stats: { power: 56, speed: 60, hax: 70, durability: 52, intelligence: 99, narrative: 78 }, descriptor: "Strategic genius and high-end tech manipulator." },
+        { name: "The Penguin", verse: "DC Comics", tier: "City-Planetary", stats: { power: 52, speed: 55, hax: 55, durability: 54, intelligence: 88, narrative: 66 }, descriptor: "Tactical crime lord, not a cosmic threat." },
+        { name: "Deathstroke", verse: "DC Comics", tier: "Planetary", stats: { power: 82, speed: 79, hax: 60, durability: 82, intelligence: 88, narrative: 74 }, descriptor: "Elite mercenary with insane combat skill." },
+
+        { name: "John Wick", verse: "John Wick", tier: "Human-High", stats: { power: 68, speed: 72, hax: 35, durability: 70, intelligence: 80, narrative: 65 }, descriptor: "A highly skilled human with absurd discipline." },
+        { name: "Neo", verse: "The Matrix", tier: "Planetary-Universal", stats: { power: 86, speed: 96, hax: 92, durability: 84, intelligence: 92, narrative: 78 }, descriptor: "Reality-bending cybernetic monad with huge control potential." },
+        { name: "Agent Smith", verse: "The Matrix", tier: "Planetary-Universal", stats: { power: 84, speed: 77, hax: 91, durability: 79, intelligence: 86, narrative: 75 }, descriptor: "Programmatic oppressive hive mind with logic-driven force." },
+
+        { name: "Dio Brando", verse: "JoJo's Bizarre Adventure", tier: "Universal", stats: { power: 90, speed: 88, hax: 93, durability: 84, intelligence: 91, narrative: 83 }, descriptor: "A manipulator and power monster whose control is grotesque." },
+        { name: "Jotaro Kujo", verse: "JoJo's Bizarre Adventure", tier: "Universal", stats: { power: 92, speed: 94, hax: 85, durability: 88, intelligence: 82, narrative: 84 }, descriptor: "A precise powerhouse with elite support mechanics." },
+        { name: "Star Platinum", verse: "JoJo's Bizarre Adventure", tier: "Universal", stats: { power: 95, speed: 99, hax: 80, durability: 90, intelligence: 76, narrative: 84 }, descriptor: "A monstrous short-range finisher and speed demon." },
+        { name: "Giorno Giovanna", verse: "JoJo's Bizarre Adventure", tier: "Universal", stats: { power: 92, speed: 90, hax: 91, durability: 89, intelligence: 86, narrative: 85 }, descriptor: "A reality-shaping commander with grand tactical logic." },
+
+        { name: "Berserker", verse: "Fate", tier: "Planetary", stats: { power: 90, speed: 78, hax: 65, durability: 94, intelligence: 62, narrative: 72 }, descriptor: "Instinctive destroyer with massive brute force." },
+        { name: "Saber", verse: "Fate", tier: "Planetary", stats: { power: 84, speed: 83, hax: 73, durability: 81, intelligence: 77, narrative: 78 }, descriptor: "A classic archetypal duelist." },
+
+        { name: "Riku", verse: "Kingdom Hearts", tier: "Planetary-Universal", stats: { power: 84, speed: 86, hax: 90, durability: 80, intelligence: 83, narrative: 84 }, descriptor: "A keyblade wielder with dangerous layered control." },
+        { name: "Sora", verse: "Kingdom Hearts", tier: "Planetary-Universal", stats: { power: 86, speed: 90, hax: 91, durability: 82, intelligence: 85, narrative: 85 }, descriptor: "A multiversal-level adventurer with absurd versatility." },
+        { name: "Roxas", verse: "Kingdom Hearts", tier: "Planetary-Universal", stats: { power: 84, speed: 88, hax: 85, durability: 80, intelligence: 78, narrative: 79 }, descriptor: "A dangerous and fast user of keyblade power." },
+        { name: "Xehanort", verse: "Kingdom Hearts", tier: "Multiversal", stats: { power: 92, speed: 81, hax: 96, durability: 88, intelligence: 95, narrative: 90 }, descriptor: "A driver of colossal temporal and dimensional manipulation." },
+
+        { name: "Ciel", verse: "Black Butler", tier: "Universal", stats: { power: 78, speed: 79, hax: 80, durability: 70, intelligence: 92, narrative: 68 }, descriptor: "A highly dangerous manipulator with elite domain logic." },
+        { name: "Sebastian Michaelis", verse: "Black Butler", tier: "Universal", stats: { power: 87, speed: 86, hax: 86, durability: 88, intelligence: 90, narrative: 80 }, descriptor: "A demon butler with elite tactical and metaphysical pressure." },
+
+        { name: "Kazuma", verse: "Konosuba", tier: "Planetary", stats: { power: 68, speed: 70, hax: 72, durability: 65, intelligence: 76, narrative: 66 }, descriptor: "A surprisingly dangerous comedic adventurer." },
+        { name: "Yunyun", verse: "Konosuba", tier: "Planetary", stats: { power: 70, speed: 68, hax: 66, durability: 64, intelligence: 72, narrative: 64 }, descriptor: "A mid-tier mage with tactical value." },
+
+        { name: "Kenshin Himura", verse: "Rurouni Kenshin", tier: "Universal", stats: { power: 88, speed: 85, hax: 76, durability: 83, intelligence: 81, narrative: 74 }, descriptor: "A legendary swordsman in a brutal era." },
+        { name: "Shinra Kusakabe", verse: "Fire Force", tier: "Universal", stats: { power: 86, speed: 85, hax: 80, durability: 82, intelligence: 77, narrative: 73 }, descriptor: "A top-tier pyro-specialist with high pressure." },
+        { name: "Maki Oze", verse: "Fire Force", tier: "Universal", stats: { power: 84, speed: 82, hax: 70, durability: 79, intelligence: 75, narrative: 72 }, descriptor: "A sharp, efficient combatant with practical destructive power." },
+
+        { name: "Rintarou Okabe", verse: "Steins;Gate", tier: "Universal", stats: { power: 62, speed: 64, hax: 96, durability: 55, intelligence: 98, narrative: 82 }, descriptor: "A mad scientist whose world-shaping logic is extremely dangerous." },
+        { name: "Kurisu Makise", verse: "Steins;Gate", tier: "Universal", stats: { power: 65, speed: 66, hax: 81, durability: 55, intelligence: 99, narrative: 79 }, descriptor: "A mathematical and strategic mastermind." },
+
+        { name: "Lelouch Vi Britannia", verse: "Code Geass", tier: "Multiversal", stats: { power: 79, speed: 68, hax: 96, durability: 62, intelligence: 99, narrative: 86 }, descriptor: "Control-centric manipulator and absolute strategist." },
+        { name: "C.C.", verse: "Code Geass", tier: "Multiversal", stats: { power: 84, speed: 75, hax: 97, durability: 80, intelligence: 90, narrative: 84 }, descriptor: "A near-cosmic manipulator with terrifying authority." },
+
+        { name: "Koro Sensei", verse: "Assassination Classroom", tier: "Universal", stats: { power: 90, speed: 86, hax: 91, durability: 89, intelligence: 95, narrative: 81 }, descriptor: "A surreal, absurdly dangerous being with overwhelming power." },
+        { name: "Nagisa Shiota", verse: "Assassination Classroom", tier: "Universal", stats: { power: 75, speed: 80, hax: 78, durability: 70, intelligence: 88, narrative: 73 }, descriptor: "Very dangerous because of tactical precision." },
+
+        { name: "Eren Jaeger", verse: "Attack on Titan", tier: "Universal", stats: { power: 98, speed: 87, hax: 97, durability: 96, intelligence: 76, narrative: 94 }, descriptor: "A world-scale variable with brutal pressure potential." },
+        { name: "Erwin Smith", verse: "Attack on Titan", tier: "Universal", stats: { power: 73, speed: 70, hax: 58, durability: 72, intelligence: 94, narrative: 75 }, descriptor: "Elite strategist with strong command-level value." },
+        { name: "Armin Arlert", verse: "Attack on Titan", tier: "Universal", stats: { power: 75, speed: 74, hax: 78, durability: 70, intelligence: 91, narrative: 70 }, descriptor: "A highly capable planner under severe conditions." },
+
+        { name: "Hiruzen Sarutobi", verse: "Naruto", tier: "Universal", stats: { power: 88, speed: 82, hax: 86, durability: 84, intelligence: 94, narrative: 80 }, descriptor: "An elder warlord with a legendary command base." },
+        { name: "Itachi Uchiha", verse: "Naruto", tier: "Universal", stats: { power: 91, speed: 95, hax: 89, durability: 88, intelligence: 97, narrative: 86 }, descriptor: "A cold strategic powerhouse with elite composure." },
+        { name: "Obito Uchiha", verse: "Naruto", tier: "Universal", stats: { power: 94, speed: 92, hax: 94, durability: 92, intelligence: 85, narrative: 88 }, descriptor: "An explosive and dangerous warfighter." },
+
+        { name: "Ainz Ooal Gown", verse: "Overlord", tier: "Universal", stats: { power: 94, speed: 84, hax: 97, durability: 90, intelligence: 97, narrative: 90 }, descriptor: "An overpowered overlord with absurd administrative pressure." },
+        { name: "Shalltear Bloodfallen", verse: "Overlord", tier: "Universal", stats: { power: 88, speed: 91, hax: 80, durability: 88, intelligence: 78, narrative: 78 }, descriptor: "A dangerous vampire assassin with strong offense." },
+        { name: "Sebastian", verse: "Overlord", tier: "Universal", stats: { power: 89, speed: 90, hax: 79, durability: 87, intelligence: 80, narrative: 76 }, descriptor: "A very dangerous combatant with elite speed." },
+
+        { name: "Albedo", verse: "Overlord", tier: "Universal", stats: { power: 87, speed: 82, hax: 85, durability: 84, intelligence: 86, narrative: 78 }, descriptor: "A manipulative and dangerous elite presence." },
+        { name: "Asuna", verse: "Sword Art Online", tier: "Universal", stats: { power: 84, speed: 88, hax: 70, durability: 80, intelligence: 81, narrative: 75 }, descriptor: "A razor-sharp long-range and melee specialist." },
+        { name: "Kirito", verse: "Sword Art Online", tier: "Universal", stats: { power: 86, speed: 90, hax: 72, durability: 83, intelligence: 79, narrative: 76 }, descriptor: "A fast and precise combatant with good fit to the metagame." },
+
+        { name: "Natsu", verse: "Fairy Tail", tier: "Universal", stats: { power: 94, speed: 86, hax: 87, durability: 91, intelligence: 70, narrative: 80 }, descriptor: "Dragon slayer with dangerous destructive force." },
+        { name: "Gray Fullbuster", verse: "Fairy Tail", tier: "Universal", stats: { power: 88, speed: 82, hax: 78, durability: 84, intelligence: 77, narrative: 73 }, descriptor: "A reliable, versatile ice-user with strong control." },
+
+        { name: "Rin Okumura", verse: "Blue Exorcist", tier: "Universal", stats: { power: 86, speed: 84, hax: 82, durability: 81, intelligence: 74, narrative: 74 }, descriptor: "A demonic prince with brutal presence." },
+        { name: "Yukio Okumura", verse: "Blue Exorcist", tier: "Universal", stats: { power: 80, speed: 85, hax: 77, durability: 72, intelligence: 90, narrative: 72 }, descriptor: "A highly competent and strategic specialist." },
+
+        { name: "Shinichi Izumi", verse: "Parasyte", tier: "Universal", stats: { power: 82, speed: 82, hax: 78, durability: 79, intelligence: 80, narrative: 75 }, descriptor: "A dangerous parasite-human hybrid with lots of adaptability." },
+        { name: "Migi", verse: "Parasyte", tier: "Universal", stats: { power: 80, speed: 88, hax: 77, durability: 74, intelligence: 79, narrative: 72 }, descriptor: "A high-speed parasite with severe aggression." },
+
+        { name: "Mewtwo Mega Evolution", verse: "Pokemon", tier: "Multiversal", stats: { power: 99, speed: 97, hax: 91, durability: 98, intelligence: 95, narrative: 90 }, descriptor: "A perfect example of high-end evolution and dangerous control." },
+        { name: "Giratina", verse: "Pokemon", tier: "Universal", stats: { power: 95, speed: 90, hax: 94, durability: 90, intelligence: 78, narrative: 80 }, descriptor: "A reality-skewing Pokémon with harsh domain pressure." },
+        { name: "Dialga", verse: "Pokemon", tier: "Universal", stats: { power: 90, speed: 84, hax: 90, durability: 88, intelligence: 85, narrative: 80 }, descriptor: "Temporal authority with high-end destructive capacity." },
+
+        { name: "Shinobu Kochou", verse: "Demon Slayer", tier: "Universal", stats: { power: 78, speed: 92, hax: 71, durability: 73, intelligence: 80, narrative: 68 }, descriptor: "A high-speed poison specialist." },
+        { name: "Nezuko Kamado", verse: "Demon Slayer", tier: "Universal", stats: { power: 86, speed: 90, hax: 83, durability: 84, intelligence: 70, narrative: 76 }, descriptor: "An extremely dangerous demon with explosive battle potential." },
+
+        { name: "Ainz Ooal Gown (World Overmind)", verse: "Overlord", tier: "Universal", stats: { power: 98, speed: 87, hax: 99, durability: 94, intelligence: 98, narrative: 94 }, descriptor: "A layered, oppressive administrative and combat authority." },
+        { name: "Himejima", verse: "Demon Slayer", tier: "Universal", stats: { power: 88, speed: 72, hax: 77, durability: 90, intelligence: 72, narrative: 70 }, descriptor: "A heavy-hitting demon slayer with strong pressure." },
+
+        { name: "Mob", verse: "Mob Psycho 100", tier: "Universal", stats: { power: 95, speed: 88, hax: 93, durability: 92, intelligence: 76, narrative: 82 }, descriptor: "A reality-sensitive psychic with explosive growth potential." },
+        { name: "Reigen Arataka", verse: "Mob Psycho 100", tier: "Universal", stats: { power: 60, speed: 65, hax: 70, durability: 56, intelligence: 84, narrative: 68 }, descriptor: "An unreliable but very clever exorcist of odd authority." },
+
+        { name: "Jiraiya", verse: "Naruto", tier: "Universal", stats: { power: 88, speed: 82, hax: 83, durability: 84, intelligence: 86, narrative: 79 }, descriptor: "A legendary sage and elite combatant." },
+        { name: "Hinata Hyuga", verse: "Naruto", tier: "Universal", stats: { power: 84, speed: 86, hax: 78, durability: 80, intelligence: 74, narrative: 75 }, descriptor: "A graceful and dangerous byakugan specialist." },
+        { name: "Sakura Haruno", verse: "Naruto", tier: "Universal", stats: { power: 88, speed: 78, hax: 75, durability: 81, intelligence: 80, narrative: 74 }, descriptor: "A medical and combat powerhouse with strong tactical capacity." },
+
+        { name: "Rena Ryuuguu", verse: "Higurashi", tier: "Universal", stats: { power: 72, speed: 70, hax: 77, durability: 68, intelligence: 80, narrative: 70 }, descriptor: "An unpredictable local phenomenon with weird logic assumptions." },
+        { name: "Mello", verse: "Death Note", tier: "Universal", stats: { power: 74, speed: 72, hax: 75, durability: 68, intelligence: 91, narrative: 70 }, descriptor: "A high-level tactical genius with chaotic energy." },
+        { name: "Near", verse: "Death Note", tier: "Universal", stats: { power: 68, speed: 62, hax: 75, durability: 52, intelligence: 99, narrative: 74 }, descriptor: "A pure analytical threat with deep strategic authority." },
+
+        { name: "Belladonna", verse: "Shokugeki no Soma", tier: "Planetary", stats: { power: 62, speed: 60, hax: 52, durability: 58, intelligence: 74, narrative: 60 }, descriptor: "Not a cosmic threat, but a good example of a contextual benchmark." },
+        { name: "Yukihira Soma", verse: "Shokugeki no Soma", tier: "Planetary", stats: { power: 70, speed: 68, hax: 60, durability: 64, intelligence: 82, narrative: 62 }, descriptor: "A high-level competitive character rather than a cosmic one." },
+
+        { name: "He-Man", verse: "Masters of the Universe", tier: "Godly", stats: { power: 88, speed: 80, hax: 74, durability: 88, intelligence: 70, narrative: 76 }, descriptor: "A legendary fantasy hero with strong mythic weight." },
+        { name: "Skeletor", verse: "Masters of the Universe", tier: "Godly", stats: { power: 82, speed: 74, hax: 86, durability: 79, intelligence: 84, narrative: 77 }, descriptor: "A cunning villain with direct magical authority." },
+
+        { name: "Shazam", verse: "DC Comics", tier: "Planetary-Universal", stats: { power: 93, speed: 86, hax: 72, durability: 92, intelligence: 70, narrative: 80 }, descriptor: "A magical powerhouse and surprising threat." },
+        { name: "Martian Manhunter", verse: "DC Comics", tier: "Planetary-Universal", stats: { power: 88, speed: 88, hax: 93, durability: 84, intelligence: 82, narrative: 84 }, descriptor: "A shape-shifting telepath with dangerous flexibility." },
+
+        { name: "Hulkbuster", verse: "Marvel Comics", tier: "Planetary-Universal", stats: { power: 95, speed: 70, hax: 58, durability: 99, intelligence: 76, narrative: 80 }, descriptor: "An engineering solution to a superhuman problem." },
+        { name: "Juggernaut", verse: "Marvel Comics", tier: "Planetary-Universal", stats: { power: 93, speed: 74, hax: 52, durability: 99, intelligence: 60, narrative: 78 }, descriptor: "A relentless unstoppable force with impossible momentum." },
+        { name: "Professor X", verse: "Marvel Comics", tier: "Planetary-Universal", stats: { power: 70, speed: 62, hax: 95, durability: 56, intelligence: 99, narrative: 85 }, descriptor: "A deep telepathic manipulator whose authority is terrifying." },
+
+        { name: "Kenny McCormick", verse: "South Park", tier: "Humanoid", stats: { power: 35, speed: 34, hax: 20, durability: 28, intelligence: 45, narrative: 30 }, descriptor: "A reminder that some characters are not meant to be taken seriously." },
+        { name: "Clyde Donovan", verse: "South Park", tier: "Humanoid", stats: { power: 34, speed: 33, hax: 20, durability: 29, intelligence: 44, narrative: 30 }, descriptor: "A local kid with no cosmic relevance." },
+        { name: "Cartman", verse: "South Park", tier: "Humanoid", stats: { power: 38, speed: 31, hax: 22, durability: 31, intelligence: 80, narrative: 44 }, descriptor: "A villain of the mundane world without cosmic scale." },
+
+        { name: "Darth Maul", verse: "Star Wars", tier: "Planetary-Stellar", stats: { power: 84, speed: 88, hax: 78, durability: 82, intelligence: 72, narrative: 77 }, descriptor: "A brutal and extremely dangerous duelist." },
+        { name: "Obi-Wan Kenobi", verse: "Star Wars", tier: "Planetary-Stellar", stats: { power: 82, speed: 83, hax: 79, durability: 80, intelligence: 86, narrative: 80 }, descriptor: "A disciplined force-user with excellent tactical control." },
+        { name: "Count Dooku", verse: "Star Wars", tier: "Planetary-Stellar", stats: { power: 86, speed: 79, hax: 80, durability: 81, intelligence: 90, narrative: 82 }, descriptor: "A master of force-based war and manipulation." },
+
+        { name: "Anos Voldigoad", verse: "Demon King Academy", tier: "Outerversal", stats: { power: 99, speed: 99, hax: 99, durability: 99, intelligence: 97, narrative: 99 }, descriptor: "A cosmic-deviant anomaly whose logic breaks ordinary rules." },
+        { name: "Sun Wukong", verse: "Chinese Mythology", tier: "Boundless", stats: { power: 99, speed: 99, hax: 99, durability: 99, intelligence: 92, narrative: 99 }, descriptor: "A legendary monkey king with extreme narrative and metaphysical force." },
+        { name: "Rune King Thor", verse: "Marvel Comics", tier: "Complex Multiversal", stats: { power: 99, speed: 99, hax: 99, durability: 99, intelligence: 96, narrative: 99 }, descriptor: "A mythic variant with overwhelming conceptual and reality-based authority." },
+        { name: "Cosmic Armor Superman", verse: "DC Comics", tier: "Outerversal", stats: { power: 99, speed: 99, hax: 99, durability: 99, intelligence: 94, narrative: 99 }, descriptor: "A hyper-abstract prime with near-absolute closure on combat logic." },
+
+        { name: "Sonic (Chaos Form)", verse: "Sonic", tier: "Universal", stats: { power: 96, speed: 99, hax: 92, durability: 90, intelligence: 80, narrative: 85 }, descriptor: "The speed and chaos energy become monstrous under transformation." },
+        { name: "Krillin", verse: "Dragon Ball", tier: "Universal", stats: { power: 83, speed: 80, hax: 63, durability: 76, intelligence: 72, narrative: 74 }, descriptor: "A classic warrior who has shown massive growth." },
+        { name: "Piccolo", verse: "Dragon Ball", tier: "Universal", stats: { power: 90, speed: 82, hax: 78, durability: 88, intelligence: 85, narrative: 78 }, descriptor: "A planet-level powerhouse and strategist." },
+        { name: "Cell", verse: "Dragon Ball", tier: "Universal", stats: { power: 96, speed: 91, hax: 76, durability: 95, intelligence: 86, narrative: 82 }, descriptor: "A monstrous adaptive combatant." },
+        { name: "Majin Buu", verse: "Dragon Ball", tier: "Universal", stats: { power: 94, speed: 81, hax: 88, durability: 98, intelligence: 53, narrative: 82 }, descriptor: "Absurd durability and reality-bending chaos." },
+
+        { name: "Sailor Moon", verse: "Sailor Moon", tier: "Planetary-Universal", stats: { power: 87, speed: 84, hax: 92, durability: 80, intelligence: 78, narrative: 82 }, descriptor: "A magical heroine whose scale becomes frightening when empowered." },
+        { name: "Usagi Tsukino", verse: "Sailor Moon", tier: "Planetary-Universal", stats: { power: 86, speed: 82, hax: 90, durability: 78, intelligence: 76, narrative: 80 }, descriptor: "An iconic magical warrior with noble scaling." },
+
+        { name: "Asriel Dreemurr", verse: "Undertale", tier: "Multiversal", stats: { power: 97, speed: 82, hax: 99, durability: 95, intelligence: 90, narrative: 93 }, descriptor: "An absurd cosmic entity in a small but profound context." },
+        { name: "Sans", verse: "Undertale", tier: "Multiversal", stats: { power: 93, speed: 98, hax: 95, durability: 90, intelligence: 88, narrative: 90 }, descriptor: "A dangerous and highly manipulative comedic being." },
+        { name: "Papyrus", verse: "Undertale", tier: "Planetary", stats: { power: 78, speed: 76, hax: 70, durability: 74, intelligence: 82, narrative: 70 }, descriptor: "A formidable but not cosmic giant." },
+
+        { name: "Uchiha Madara", verse: "Naruto", tier: "Planetary-Universal", stats: { power: 98, speed: 95, hax: 98, durability: 99, intelligence: 93, narrative: 92 }, descriptor: "Legendary warlord with enormous scale and manipulative power." },
+        { name: "Hashirama Senju", verse: "Naruto", tier: "Universal", stats: { power: 95, speed: 88, hax: 90, durability: 95, intelligence: 87, narrative: 85 }, descriptor: "A legendary shinobi who defines the baseline of the era." },
+        { name: "Tobirama Senju", verse: "Naruto", tier: "Universal", stats: { power: 92, speed: 88, hax: 93, durability: 87, intelligence: 94, narrative: 82 }, descriptor: "A highly adaptable and tactical ninja with sophisticated control." },
+
+        { name: "Maki Zenin", verse: "Jujutsu Kaisen", tier: "Universal", stats: { power: 88, speed: 87, hax: 73, durability: 83, intelligence: 79, narrative: 72 }, descriptor: "A very capable, very dangerous combatant." },
+        { name: "Yuta Okkotsu", verse: "Jujutsu Kaisen", tier: "Universal", stats: { power: 93, speed: 94, hax: 90, durability: 89, intelligence: 81, narrative: 84 }, descriptor: "A growing combatant with elite potential." },
+        { name: "Nobara Kugisaki", verse: "Jujutsu Kaisen", tier: "Universal", stats: { power: 85, speed: 82, hax: 78, durability: 80, intelligence: 77, narrative: 70 }, descriptor: "Hard-hitting and tactically dangerous." },
+
+        { name: "Mikoto Misaka", verse: "A Certain Scientific Railgun", tier: "Universal", stats: { power: 89, speed: 94, hax: 81, durability: 84, intelligence: 79, narrative: 75 }, descriptor: "A high-end electromagnetic manipulator with absurd speed and control." },
+        { name: "Accelerator", verse: "A Certain Scientific Railgun", tier: "Universal", stats: { power: 92, speed: 96, hax: 88, durability: 90, intelligence: 78, narrative: 80 }, descriptor: "A vector-scaling prodigy with elite destructive force." },
+
+        { name: "Ragna the Bloodedge", verse: "BlazBlue", tier: "Universal", stats: { power: 92, speed: 90, hax: 94, durability: 89, intelligence: 82, narrative: 80 }, descriptor: "A powerful force user with destructive and reality-warpy properties." },
+        { name: "Noctis Lucis Caelum", verse: "Final Fantasy XV", tier: "Planetary", stats: { power: 82, speed: 78, hax: 76, durability: 80, intelligence: 77, narrative: 76 }, descriptor: "A capable royal warrior with respectable output." },
+
+        { name: "Saber Alter", verse: "Fate", tier: "Universal", stats: { power: 95, speed: 88, hax: 83, durability: 92, intelligence: 77, narrative: 86 }, descriptor: "An alternate version with stronger aggression and force density." },
+        { name: "Kirei Kotomine", verse: "Fate", tier: "Universal", stats: { power: 78, speed: 69, hax: 88, durability: 72, intelligence: 96, narrative: 82 }, descriptor: "A manipulative force with layered command and magic." },
+
+        { name: "Night King", verse: "Game of Thrones", tier: "Mythic", stats: { power: 82, speed: 68, hax: 87, durability: 84, intelligence: 75, narrative: 80 }, descriptor: "A horrifying cold tyrant with undead authority." },
+        { name: "Arya Stark", verse: "Game of Thrones", tier: "Mythic", stats: { power: 74, speed: 77, hax: 60, durability: 70, intelligence: 82, narrative: 72 }, descriptor: "A very capable survivalist and fighter." },
+
+        { name: "Natsu Dragneel (Dragon Force)", verse: "Fairy Tail", tier: "Universal", stats: { power: 98, speed: 88, hax: 91, durability: 95, intelligence: 71, narrative: 87 }, descriptor: "A dragon-power form with absurdly large output." },
       ];
 
-      let index = 0;
-      let score = 0;
+      const customStorageKey = "powerscaler-pro-custom-roster-v1";
 
-      const statusEl = document.getElementById('status');
-      const questionEl = document.getElementById('question');
-      const choicesEl = document.getElementById('choices');
-      const scoreEl = document.getElementById('score');
+      const storyStages = [
+        { title: "Rookie Evaluator", target: "Saitama", winsNeeded: 2 },
+        { title: "Forum Analyst", target: "Spider-Man", winsNeeded: 3 },
+        { title: "Canon Verifier", target: "Superman", winsNeeded: 3 },
+        { title: "Tier Arbiter", target: "Naruto Uzumaki", winsNeeded: 3 },
+        { title: "Cross-verse Reviewer", target: "Gojo Satoru", winsNeeded: 3 },
+        { title: "Dimensional Auditor", target: "Doctor Strange", winsNeeded: 3 },
+        { title: "Reality Prosecutor", target: "Scarlet Witch", winsNeeded: 4 },
+        { title: "Apex Analytical Authority", target: "Arceus", winsNeeded: 4 },
+        { title: "Unfalsifiable Sovereign", target: "Vishnu", winsNeeded: 5 }
+      ];
 
-      function renderDebate() {
-        const deck = debateDeck[index % debateDeck.length];
-        questionEl.textContent = deck.prompt;
-        choicesEl.innerHTML = '';
+      const state = {
+        selectedIndex: 0,
+        stageIndex: 0,
+        respect: 0,
+        tilt: 0,
+        wins: 0,
+        customCharacters: loadCustomRoster()
+      };
 
-        deck.options.forEach((option, i) => {
-          const btn = document.createElement('button');
-          btn.textContent = option;
-          btn.addEventListener('click', () => {
-            const correct = i === deck.bestIndex;
-            if (correct) {
-              score += 1;
-              statusEl.textContent = 'Correct. That answer fits the strongest scaling logic.';
-            } else {
-              statusEl.textContent = `Incorrect. Better answer: ${deck.correct}`;
-            }
-            scoreEl.textContent = `Score: ${score}`;
-            index = (index + 1) % debateDeck.length;
-            setTimeout(renderDebate, 1100);
+      function loadCustomRoster() {
+        try {
+          const raw = localStorage.getItem(customStorageKey);
+          return raw ? JSON.parse(raw) : [];
+        } catch (error) {
+          return [];
+        }
+      }
+
+      function saveCustomRoster() {
+        localStorage.setItem(customStorageKey, JSON.stringify(state.customCharacters));
+      }
+
+      function getRoster() {
+        return [...baseRoster, ...state.customCharacters];
+      }
+
+      function getSelectedCharacter() {
+        const roster = getRoster();
+        if (!roster.length) return { name: "Undefined", verse: "None", tier: "Unassigned", stats: { power: 0, speed: 0, hax: 0, durability: 0, intelligence: 0, narrative: 0 }, descriptor: "No character selected." };
+        return roster[state.selectedIndex] || roster[0];
+      }
+
+      function getStoryTarget() {
+        const roster = getRoster();
+        const targetName = storyStages[state.stageIndex]?.target;
+        const found = roster.find((item) => item.name === targetName);
+        return found || roster[0];
+      }
+
+      function renderRoster() {
+        const roster = getRoster();
+        const query = document.getElementById("searchInput").value.trim().toLowerCase();
+        const filtered = roster.filter((entry) => {
+          const value = `${entry.name} ${entry.verse} ${entry.tier}`.toLowerCase();
+          return value.includes(query);
+        });
+
+        const box = document.getElementById("rosterBox");
+        box.innerHTML = "";
+
+        filtered.forEach((entry, idx) => {
+          const realIndex = roster.findIndex((item) => item.name === entry.name && item.verse === entry.verse);
+          const item = document.createElement("div");
+          item.className = "roster-item" + (realIndex === state.selectedIndex ? " active" : "");
+          item.innerHTML = `
+            <div class="roster-name">${entry.name}</div>
+            <div class="roster-meta">${entry.verse}<br>${entry.tier}</div>
+          `;
+          item.addEventListener("click", () => {
+            state.selectedIndex = realIndex;
+            syncSelection();
           });
-          choicesEl.appendChild(btn);
+          box.appendChild(item);
         });
       }
 
-      renderDebate();
+      function renderTargetOptions() {
+        const select = document.getElementById("targetSelect");
+        const roster = getRoster();
+        select.innerHTML = "";
+
+        roster.forEach((entry) => {
+          const option = document.createElement("option");
+          option.value = entry.name;
+          option.textContent = `${entry.name} • ${entry.verse}`;
+          select.appendChild(option);
+        });
+
+        const target = getStoryTarget();
+        if (target) select.value = target.name;
+      }
+
+      function updateMetrics(char) {
+        document.getElementById("metricPower").textContent = char.stats.power;
+        document.getElementById("metricSpeed").textContent = char.stats.speed;
+        document.getElementById("metricHax").textContent = char.stats.hax;
+        document.getElementById("metricDurability").textContent = char.stats.durability;
+      }
+
+      function syncSelection() {
+        const char = getSelectedCharacter();
+        const target = getStoryTarget();
+
+        document.getElementById("subjectInput").value = char.name;
+        document.getElementById("playerName").textContent = char.name;
+        document.getElementById("playerTier").textContent = char.tier;
+
+        document.getElementById("targetName").textContent = target.name;
+        document.getElementById("targetTier").textContent = target.tier;
+        document.getElementById("challengeStatus").textContent = `Targeting: ${target.name} / ${target.verse}`;
+
+        renderTargetOptions();
+        renderRoster();
+        updateMetrics(char);
+      }
+
+      function updateStoryUI() {
+        const stage = storyStages[state.stageIndex];
+        const totalWinsNeeded = stage.winsNeeded;
+        const progress = ((state.wins % totalWinsNeeded) / totalWinsNeeded) * 100;
+
+        document.getElementById("storyTitle").textContent = `${stage.title} — ${stage.target}`;
+        document.getElementById("storyProgressBar").style.width = `${Math.min(progress, 100)}%`;
+        document.getElementById("rankChip").textContent = stage.title;
+        document.getElementById("respectChip").textContent = `Respect: ${state.respect}`;
+        document.getElementById("tiltChip").textContent = `Tilt: ${state.tilt}%`;
+        document.getElementById("difficultyTag").textContent = `Difficulty: ${state.stageIndex + 1}`;
+      }
+
+      function bumpStageIfNeeded() {
+        const stage = storyStages[state.stageIndex];
+        if (state.wins >= stage.winsNeeded) {
+          state.stageIndex = Math.min(state.stageIndex + 1, storyStages.length - 1);
+          state.wins = 0;
+          state.respect += 8;
+          document.getElementById("statusPill").textContent = "Stage Cleared";
+          document.getElementById("statusPill").style.color = "#7df7bf";
+          document.getElementById("responseText").textContent = `The benchmark escalates. You have reached ${storyStages[state.stageIndex].title}. The system recalibrates to a stronger logic standard.`;
+        } else {
+          document.getElementById("statusPill").textContent = "Analytic Mode";
+          document.getElementById("statusPill").style.color = "#60d6ff";
+        }
+      }
+
+      function generateMetricText() {
+        const candidate = getSelectedCharacter();
+        const target = getStoryTarget();
+        const prompts = [
+          `${candidate.name} wins because the power floor, speed profile, and durability scaling are too high for ${target.name} to meaningfully contest under canonical pressure.`,
+          `The scaling argument is structural: ${candidate.name} retains more efficient world-level output and more consistent combat continuity than ${target.name}.`,
+          `${candidate.name} has superior durability and faster strategic response timing, which converts into a stable edge in speed, force, and environmental control.`
+        ];
+
+        const text = prompts[Math.floor(Math.random() * prompts.length)];
+        document.getElementById("claimInput").value = text;
+        document.getElementById("responseText").textContent = "A fresh metric chain has been generated. The engine is now re-evaluating your claim.";
+      }
+
+      function getWords(text) {
+        return text.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
+      }
+
+      function evaluateClaim(claimText, candidate, target) {
+        const text = (claimText || "").trim();
+        if (!text) {
+          return { verdict: "reject", confidence: 0, reason: "No evidence submitted. The system requires a concrete argument." };
+        }
+
+        const words = getWords(text);
+        const categoryMap = {
+          power: ["power", "destructive", "ap", "blast", "force", "damage", "output", "strength"],
+          speed: ["speed", "blitz", "fast", "velocity", "reaction", "tempo", "travel", "lightning"],
+          durability: ["durability", "tank", "resist", "survive", "endurance", "immortal", "hard"],
+          hax: ["hax", "reality", "warp", "void", "space", "time", "soul", "rule", "law", "logic", "concept"],
+          intelligence: ["strategy", "tactics", "intelligence", "canon", "analysis", "precision", "feats", "narrative"],
+          narrative: ["canon", "narrative", "story", "continuity", "authority", "scale", "tier", "verse", "mythic"]
+        };
+
+        let confidence = 0;
+        Object.values(categoryMap).forEach((list) => {
+          if (list.some((item) => words.includes(item))) confidence += 12;
+        });
+
+        if (["wins", "beats", "defeats", "surpasses", "kills", "outclasses", "outranks"].some((word) => words.includes(word))) confidence += 10;
+        if (["equal", "tie", "same"].some((word) => words.includes(word))) confidence -= 8;
+        if (text.length > 220) confidence += 10;
+        if (text.length < 50) confidence -= 12;
+
+        const candidateTotal = Object.values(candidate.stats).reduce((sum, value) => sum + value, 0) / Object.keys(candidate.stats).length;
+        const targetTotal = Object.values(target.stats).reduce((sum, value) => sum + value, 0) / Object.keys(target.stats).length;
+        const delta = candidateTotal - targetTotal;
+
+        if (candidate.name.toLowerCase().split(" ").some((part) => words.includes(part))) confidence += 6;
+        if (target.name.toLowerCase().split(" ").some((part) => words.includes(part))) confidence += 8;
+
+        const threshold = 42 + state.stageIndex * 6;
+        let verdict = "reject";
+
+        if (delta > 0 && confidence >= threshold) verdict = "accept";
+        else if (delta > 0 && confidence >= threshold - 12) verdict = "caution";
+        else if (delta < 0 && confidence >= threshold - 8) verdict = "refute";
+
+        return {
+          verdict,
+          confidence: Math.max(0, Math.min(100, confidence + delta * 0.8)),
+          reason: verdict === "accept"
+            ? `The scaling chain is coherent. ${candidate.name} exceeds ${target.name} in the relevant categories and the logic is sufficient to force a hierarchy update.`
+            : verdict === "caution"
+            ? `The claim has structure, but the evidence is not yet decisive enough to fully overturn the benchmark. You are close, but not complete.`
+            : verdict === "refute"
+            ? `The evidence does not justify the claim. ${target.name} remains stronger under the active analytical model.`
+            : "No viable scaling chain was provided. The system requires measurable comparative logic, not empty emotional pressure.",
+          delta
+        };
+      }
+
+      function respondToChallenge(result, candidate, target) {
+        if (result.verdict === "accept") {
+          state.respect += 12 + Math.round(result.confidence / 10);
+          state.wins += 1;
+          state.tilt = Math.max(0, state.tilt - 8);
+
+          document.getElementById("responseText").textContent = `Accepted. ${candidate.name} out-scales ${target.name} under the current model, and the engine recognizes that the hierarchy has shifted. The system remains cold, but it has acknowledged the correction.`;
+          document.getElementById("statusPill").textContent = "Victory Logged";
+          document.getElementById("statusPill").style.color = "#7df7bf";
+          bumpStageIfNeeded();
+          updateStoryUI();
+          return;
+        }
+
+        if (result.verdict === "caution") {
+          state.respect += 4;
+          state.tilt = Math.min(100, state.tilt + 6);
+          document.getElementById("responseText").textContent = `The argument is partly coherent but insufficiently decisive. ${target.name} remains the active benchmark until stronger evidence is provided.`;
+          document.getElementById("statusPill").textContent = "Partial Acceptance";
+          document.getElementById("statusPill").style.color = "#ffb76b";
+          updateStoryUI();
+          return;
+        }
+
+        if (result.verdict === "refute") {
+          state.tilt = Math.min(100, state.tilt + 12 + state.stageIndex * 2);
+          document.getElementById("responseText").textContent = `Rejected. The evidence fails under pressure. ${target.name} stays ahead in the established hierarchy, and your claim does not survive cold review.`;
+          document.getElementById("statusPill").textContent = "Rejection";
+          document.getElementById("statusPill").style.color = "#ff6b6b";
+          updateStoryUI();
+          return;
+        }
+
+        state.tilt = Math.min(100, state.tilt + 16);
+        document.getElementById("responseText").textContent = `Insufficient data. The system requires measurable feats, explicit comparisons, and coherent tier logic. “Feels stronger” is not enough to overturn a benchmark.`;
+        document.getElementById("statusPill").textContent = "Insufficient Data";
+        document.getElementById("statusPill").style.color = "#ff6b6b";
+        updateStoryUI();
+      }
+
+      function runAnalysis() {
+        const candidate = getSelectedCharacter();
+        const target = getRoster().find((entry) => entry.name === document.getElementById("targetSelect").value) || getStoryTarget();
+        const claimText = document.getElementById("claimInput").value;
+        const result = evaluateClaim(claimText, candidate, target);
+        respondToChallenge(result, candidate, target);
+      }
+
+      function handlePressure() {
+        const candidate = getSelectedCharacter();
+        const target = getStoryTarget();
+        state.tilt = Math.min(100, state.tilt + 16);
+        document.getElementById("responseText").textContent = `Pressure increased. ${candidate.name} must now outperform ${target.name} across multiple categories or the benchmark remains stable.`;
+        document.getElementById("statusPill").textContent = "Pressure Applied";
+        document.getElementById("statusPill").style.color = "#f7cc66";
+        updateStoryUI();
+      }
+
+      function addCustomCharacter() {
+        const name = prompt("Name of the custom character:", "New Character");
+        if (!name || !name.trim()) return;
+        const verse = prompt("Verse / universe:", "Custom Universe") || "Custom Universe";
+        const tier = prompt("Tier / scale label:", "Custom Tier") || "Custom Tier";
+        const power = Number(prompt("Power (0-100):", "80") || 80);
+        const speed = Number(prompt("Speed (0-100):", "80") || 80);
+        const hax = Number(prompt("Hax (0-100):", "60") || 60);
+        const durability = Number(prompt("Durability (0-100):", "80") || 80);
+        const intelligence = Number(prompt("Intelligence (0-100):", "70") || 70);
+        const narrative = Number(prompt("Narrative authority (0-100):", "70") || 70);
+
+        const entry = {
+          name: name.trim(),
+          verse: verse.trim(),
+          tier: tier.trim(),
+          stats: {
+            power: Math.min(100, Math.max(0, power)),
+            speed: Math.min(100, Math.max(0, speed)),
+            hax: Math.min(100, Math.max(0, hax)),
+            durability: Math.min(100, Math.max(0, durability)),
+            intelligence: Math.min(100, Math.max(0, intelligence)),
+            narrative: Math.min(100, Math.max(0, narrative)),
+          },
+          descriptor: "User-defined character entry added to the local database."
+        };
+
+        state.customCharacters.push(entry);
+        saveCustomRoster();
+        state.selectedIndex = getRoster().length - 1;
+        syncSelection();
+      }
+
+      function initialize() {
+        const roster = getRoster();
+        if (!roster.length) {
+          state.selectedIndex = 0;
+        }
+
+        document.getElementById("searchInput").addEventListener("input", renderRoster);
+        document.getElementById("runBtn").addEventListener("click", runAnalysis);
+        document.getElementById("randomBtn").addEventListener("click", generateMetricText);
+        document.getElementById("pressureBtn").addEventListener("click", handlePressure);
+        document.getElementById("addCustomBtn").addEventListener("click", addCustomCharacter);
+
+        document.getElementById("targetSelect").addEventListener("change", () => {
+          const target = getRoster().find((entry) => entry.name === document.getElementById("targetSelect").value) || getStoryTarget();
+          document.getElementById("targetName").textContent = target.name;
+          document.getElementById("targetTier").textContent = target.tier;
+          document.getElementById("challengeStatus").textContent = `Targeting: ${target.name} / ${target.verse}`;
+        });
+
+        document.getElementById("subjectInput").addEventListener("input", () => {
+          const value = document.getElementById("subjectInput").value.trim();
+          const current = getSelectedCharacter();
+          if (!value) return;
+          current.name = value;
+          document.getElementById("playerName").textContent = value;
+        });
+
+        syncSelection();
+        updateStoryUI();
+      }
+
+      initialize();
     </script>
   </body>
 </html>
