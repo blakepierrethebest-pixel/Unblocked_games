@@ -7,27 +7,43 @@
     <style>
       * { box-sizing: border-box; }
       html, body {
-        margin: 0; min-height: 100vh; background: linear-gradient(180deg, #07151d, #112a3c 50%, #081823 100%);
-        color: #edf6ff; font-family: Arial, sans-serif;
-      }
-      body {
-        display: grid; place-items: center;
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, #07151d, #112a3c 50%, #081823 100%);
+        color: #edf6ff;
+        font-family: Arial, sans-serif;
       }
       .game-wrap {
-        position: relative; width: min(96vw, 980px); margin: 16px auto;
+        position: relative;
+        width: min(96vw, 980px);
+        margin: 16px auto;
       }
       .hud {
-        position: absolute; top: 12px; left: 14px; right: 14px; display: flex;
-        justify-content: space-between; align-items: center; gap: 12px; pointer-events: none;
+        position: absolute;
+        top: 12px;
+        left: 14px;
+        right: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        pointer-events: none;
       }
       .badge {
         background: rgba(7, 19, 26, 0.78);
         border: 1px solid rgba(255,255,255,0.14);
-        border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 0.95rem;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-weight: 700;
+        font-size: 0.95rem;
         letter-spacing: 0.02em;
       }
       canvas {
-        display: block; width: 100%; height: auto;
+        display: block;
+        width: 100%;
+        height: auto;
         border-radius: 18px;
         border: 2px solid rgba(255,255,255,0.12);
         background: linear-gradient(180deg, #0a1a24, #132f46 55%, #091520);
@@ -61,24 +77,28 @@
       const player = {
         x: 175,
         y: 470,
-        w: 26,
+        w: 28,
         h: 52,
         speed: 5.2,
         hasBall: true,
         facing: 1,
+        vy: 0,
+        grounded: true,
       };
 
       const cpu = {
         x: 720,
         y: 470,
-        w: 26,
+        w: 28,
         h: 52,
-        speed: 4.6,
+        speed: 4.4,
         hasBall: false,
         facing: -1,
+        vy: 0,
+        grounded: true,
       };
 
-      const hoop = { x: 820, y: 155, radius: 18 };
+      const hoop = { x: 820, y: 150, radius: 18 };
       const ball = { x: 0, y: 0, vx: 0, vy: 0, r: 10, carrier: 'player', inAir: false };
 
       function clamp(value, min, max) {
@@ -86,34 +106,38 @@
       }
 
       function resetPositions() {
-        player.x = 175; player.y = 470; player.hasBall = true; player.facing = 1;
-        cpu.x = 720; cpu.y = 470; cpu.hasBall = false; cpu.facing = -1;
+        player.x = 175; player.y = 470; player.hasBall = true; player.facing = 1; player.vy = 0; player.grounded = true;
+        cpu.x = 720; cpu.y = 470; cpu.hasBall = false; cpu.facing = -1; cpu.vy = 0; cpu.grounded = true;
         ball.x = player.x + 12; ball.y = player.y - 18; ball.vx = 0; ball.vy = 0; ball.inAir = false; ball.carrier = 'player';
       }
 
       function playerShoot() {
         if (!player.hasBall || ball.inAir || state.gameOver) return;
-        const targetX = hoop.x + (Math.random() * 30 - 15);
-        const targetY = hoop.y + 14;
+
+        const targetX = hoop.x + (Math.random() * 32 - 16);
+        const targetY = hoop.y + 12;
         const dx = targetX - (player.x + 12);
         const dy = targetY - (player.y - 18);
+
         ball.inAir = true;
         ball.carrier = 'air';
         ball.vx = dx * 0.13;
-        ball.vy = -Math.abs(dy) * 0.14 - 10.4;
+        ball.vy = -Math.abs(dy) * 0.14 - 10.2;
         player.hasBall = false;
         state.keys.shoot = false;
       }
 
       function cpuShoot() {
-        if (cpu.hasBall === false || ball.inAir || state.gameOver) return;
-        const targetX = 190 + Math.random() * 30;
+        if (!cpu.hasBall || ball.inAir || state.gameOver) return;
+
+        const targetX = 180 + Math.random() * 30;
         const dx = targetX - cpu.x;
         const dy = hoop.y - (cpu.y - 18);
+
         ball.inAir = true;
         ball.carrier = 'air';
         ball.vx = dx * 0.13;
-        ball.vy = -Math.abs(dy) * 0.14 - 10.1;
+        ball.vy = -Math.abs(dy) * 0.14 - 10.2;
         cpu.hasBall = false;
       }
 
@@ -127,16 +151,31 @@
 
         player.x = clamp(player.x + dx * player.speed, 110, 360);
         player.y = clamp(player.y + dy * player.speed, 400, 560);
+
         if (dx < 0) player.facing = -1;
         if (dx > 0) player.facing = 1;
+
+        if (state.keys.shoot && player.hasBall) {
+          playerShoot();
+        }
+
+        if (player.grounded && state.keys.up) {
+          player.vy = -14;
+          player.grounded = false;
+        }
+
+        player.vy += 0.75;
+        player.y += player.vy;
+
+        if (player.y >= 470) {
+          player.y = 470;
+          player.vy = 0;
+          player.grounded = true;
+        }
 
         if (player.hasBall) {
           ball.x = player.x + 12;
           ball.y = player.y - 18 + Math.sin(performance.now() * 0.02) * 2.2;
-        }
-
-        if (state.keys.shoot) {
-          playerShoot();
         }
       }
 
@@ -146,27 +185,23 @@
         if (cpu.hasBall) {
           const targetX = 760;
           const targetY = 450;
-          cpu.x += (targetX - cpu.x) * 0.06;
-          cpu.y += (targetY - cpu.y) * 0.06;
+          cpu.x += (targetX - cpu.x) * 0.08;
+          cpu.y += (targetY - cpu.y) * 0.08;
           cpu.x = clamp(cpu.x, 560, 860);
           cpu.y = clamp(cpu.y, 410, 560);
-
-          if (Math.random() < 0.03) {
-            cpuShoot();
-          }
-
+          if (Math.random() < 0.035) cpuShoot();
           ball.x = cpu.x - 10;
-          ball.y = cpu.y - 14 + Math.sin(performance.now() * 0.02 + 40) * 2.0;
+          ball.y = cpu.y - 18 + Math.sin(performance.now() * 0.02 + 40) * 2.1;
           return;
         }
 
-        const shouldTakeBall = Math.random() < 0.02;
-        if (shouldTakeBall && !player.hasBall) {
+        const closeToBall = Math.abs(player.x - cpu.x) < 70 && Math.abs(player.y - cpu.y) < 60;
+        if (closeToBall && !player.hasBall && !ball.inAir) {
           cpu.hasBall = true;
           ball.carrier = 'cpu';
         }
 
-        const targetX = player.x + 90;
+        const targetX = player.x + 100;
         cpu.x += (targetX - cpu.x) * 0.045;
         cpu.x = clamp(cpu.x, 590, 860);
         cpu.y += (player.y - cpu.y) * 0.05;
@@ -191,7 +226,7 @@
         const rimBottom = hoop.y + 24;
 
         if (ball.x > rimLeft && ball.x < rimRight && ball.y > rimTop && ball.y < rimBottom && ball.vy > 0) {
-          const centerHit = ball.x > hoop.x - 13 && ball.x < hoop.x + 13 && ball.y > hoop.y - 8 && ball.y < hoop.y + 10;
+          const centerHit = ball.x > hoop.x - 12 && ball.x < hoop.x + 12 && ball.y > hoop.y - 8 && ball.y < hoop.y + 10;
           if (centerHit) {
             if (ball.x < canvas.width / 2) {
               state.playerScore += 2;
@@ -277,10 +312,12 @@
 
       function drawBall() {
         if (ball.carrier === 'player') {
-          ball.x = player.x + 12; ball.y = player.y - 20;
+          ball.x = player.x + 12;
+          ball.y = player.y - 18;
         }
         if (ball.carrier === 'cpu') {
-          ball.x = cpu.x - 10; ball.y = cpu.y - 18;
+          ball.x = cpu.x - 10;
+          ball.y = cpu.y - 18;
         }
 
         ctx.fillStyle = '#f5d04f';
