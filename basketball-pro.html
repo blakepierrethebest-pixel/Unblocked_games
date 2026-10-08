@@ -11,7 +11,7 @@
         min-height: 100vh;
         display: grid;
         place-items: center;
-        background: linear-gradient(180deg, #07151d, #102a3c 48%, #091823 100%);
+        background: linear-gradient(180deg, #06141c, #10283b 44%, #091823 100%);
         color: #edf6ff;
         font-family: Arial, sans-serif;
       }
@@ -75,34 +75,44 @@
         timeLeft: 60,
         lastTime: 0,
         keys: { left: false, right: false, up: false, down: false, shoot: false },
-        gameOver: false
+        gameOver: false,
       };
 
       const player = {
         x: 175,
         y: 470,
+        vx: 0,
+        vy: 0,
         w: 28,
-        h: 52,
+        h: 54,
         speed: 290,
+        accel: 1200,
+        friction: 1650,
+        jumpPower: 420,
         hasBall: true,
         facing: 1,
-        vy: 0,
         grounded: true,
-        shootCooldown: 0
+        shootCooldown: 0,
+        legSwing: 0,
       };
 
       const cpu = {
         x: 720,
         y: 470,
+        vx: 0,
+        vy: 0,
         w: 28,
-        h: 52,
+        h: 54,
         speed: 240,
+        accel: 1100,
+        friction: 1600,
+        jumpPower: 380,
         hasBall: false,
         facing: -1,
-        vy: 0,
         grounded: true,
         shootCooldown: 0,
-        aiTimer: 0
+        legSwing: 0,
+        aiTimer: 0,
       };
 
       const hoop = { x: 820, y: 150 };
@@ -114,7 +124,7 @@
         r: 10,
         carrier: 'player',
         inAir: false,
-        shotFromLeft: true
+        shotFromLeft: true,
       };
 
       function clamp(value, min, max) {
@@ -124,19 +134,22 @@
       function resetPositions() {
         player.x = 175;
         player.y = 470;
+        player.vx = 0;
+        player.vy = 0;
         player.hasBall = true;
         player.facing = 1;
-        player.vy = 0;
         player.grounded = true;
         player.shootCooldown = 0;
 
         cpu.x = 720;
         cpu.y = 470;
+        cpu.vx = 0;
+        cpu.vy = 0;
         cpu.hasBall = false;
         cpu.facing = -1;
-        cpu.vy = 0;
         cpu.grounded = true;
         cpu.shootCooldown = 0;
+        cpu.aiTimer = 0;
 
         ball.x = player.x + 12;
         ball.y = player.y - 18;
@@ -185,14 +198,20 @@
         if (state.keys.right) moveDir += 1;
 
         if (moveDir !== 0) {
-          player.x += moveDir * player.speed * dt;
+          player.vx += moveDir * player.accel * dt;
           player.facing = moveDir > 0 ? 1 : -1;
+        } else {
+          const friction = player.friction * dt;
+          if (Math.abs(player.vx) <= friction) player.vx = 0;
+          else player.vx -= Math.sign(player.vx) * friction;
         }
 
+        player.vx = clamp(player.vx, -player.speed, player.speed);
+        player.x += player.vx * dt;
         player.x = clamp(player.x, 110, 360);
 
         if (state.keys.up && player.grounded) {
-          player.vy = -420;
+          player.vy = -player.jumpPower;
           player.grounded = false;
         }
 
@@ -211,10 +230,13 @@
         }
 
         player.shootCooldown = Math.max(0, player.shootCooldown - dt);
-
         if (state.keys.shoot && player.shootCooldown === 0) {
           shootForPlayer();
-          player.shootCooldown = 0.24;
+          player.shootCooldown = 0.22;
+        }
+
+        if (Math.abs(player.vx) > 0.5) {
+          player.legSwing += Math.abs(player.vx) * dt * 0.9;
         }
       }
 
@@ -250,8 +272,16 @@
         }
 
         const targetX = player.x + 100;
-        cpu.x += (targetX - cpu.x) * 0.9 * dt;
+        const dir = targetX > cpu.x ? 1 : -1;
+        cpu.vx += dir * cpu.accel * dt;
+        cpu.vx = clamp(cpu.vx, -cpu.speed, cpu.speed);
+        cpu.x += cpu.vx * dt;
         cpu.x = clamp(cpu.x, 590, 860);
+
+        if (Math.abs(cpu.x - targetX) < 20) {
+          cpu.vx *= 0.8;
+        }
+
         cpu.y += (player.y - cpu.y) * 0.6 * dt;
         cpu.y = clamp(cpu.y, 410, 560);
 
@@ -362,21 +392,84 @@
         }
       }
 
-      function drawPlayer(entity, color) {
+      function drawShadow(entity) {
+        ctx.fillStyle = 'rgba(0,0,0,0.22)';
+        ctx.beginPath();
+        ctx.ellipse(entity.x, 530, 26, 10, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function drawPlayerModel(entity, color, skin) {
         const bodyX = entity.x - entity.w / 2;
         const bodyY = entity.y - entity.h / 2;
+        const facing = entity.facing;
+        const swing = Math.sin(entity.legSwing) * 8;
 
-        ctx.fillStyle = color;
-        ctx.fillRect(bodyX, bodyY, entity.w, entity.h);
+        drawShadow(entity);
 
-        ctx.fillStyle = '#edf6ff';
+        ctx.save();
+        ctx.translate(entity.x, entity.y);
+        ctx.scale(facing, 1);
+
+        ctx.fillStyle = '#0a0f14';
         ctx.beginPath();
-        ctx.arc(bodyX + entity.w / 2, bodyY - 12, 10, 0, Math.PI * 2);
+        ctx.arc(0, -22, 12, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = '#edf6ff';
-        ctx.fillRect(bodyX + 8, bodyY + entity.h - 4, 6, 18);
-        ctx.fillRect(bodyX + entity.w - 14, bodyY + entity.h - 4, 6, 18);
+        ctx.fillStyle = skin;
+        ctx.beginPath();
+        ctx.arc(0, -22, 9, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 6;
+        ctx.lineCap = 'round';
+
+        ctx.beginPath();
+        ctx.moveTo(0, -12);
+        ctx.lineTo(0, 10);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.lineTo(12, 4);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.lineTo(-12, 4);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, 10);
+        ctx.lineTo(10, 28 + swing * 0.4);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, 10);
+        ctx.lineTo(-10, 28 - swing * 0.4);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(10, 4);
+        ctx.lineTo(16, 20 + swing);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(-10, 4);
+        ctx.lineTo(-16, 20 - swing);
+        ctx.stroke();
+
+        ctx.restore();
+
+        if (entity.hasBall) {
+          const ballX = entity.x + (facing * 12);
+          const ballY = entity.y - 10 + Math.sin(performance.now() * 0.025) * 2;
+          ctx.fillStyle = '#f5d04f';
+          ctx.beginPath();
+          ctx.arc(ballX, ballY, 7, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       function drawBall() {
@@ -408,8 +501,8 @@
 
       function render() {
         drawCourt();
-        drawPlayer(player, '#4cc9f0');
-        drawPlayer(cpu, '#ef476f');
+        drawPlayerModel(player, '#4cc9f0', '#f4c79d');
+        drawPlayerModel(cpu, '#ef476f', '#f3c399');
         drawBall();
         drawUI();
       }
