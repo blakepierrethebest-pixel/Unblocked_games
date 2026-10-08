@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz Arena</title>
+    <style>
+      :root {
+        --bg: #081823;
+        --bg2: #10273d;
+        --panel: rgba(16, 24, 34, 0.96);
+        --line: rgba(255,255,255,0.12);
+        --text: #edf6ff;
+        --muted: #bfd9f5;
+        --accent: #ffb703;
+        --cyan: #4cc9f0;
+        --good: #7fe36c;
+        --bad: #ef476f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: linear-gradient(180deg, var(--bg), var(--bg2));
+        color: var(--text);
+        font-family: Arial, sans-serif;
+      }
+      .wrap { max-width: 900px; margin: 0 auto; padding: 28px 18px 60px; }
+      .panel {
+        background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 20px;
+        box-shadow: 0 26px 60px rgba(0,0,0,0.28);
+      }
+      .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+      h1 { margin: 0; color: var(--accent); font-size: clamp(2rem, 5vw, 3rem); }
+      .meta { display: flex; gap: 10px; flex-wrap: wrap; }
+      .pill {
+        border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; background: rgba(255,255,255,0.03); color: var(--muted);
+      }
+      .question { font-size: clamp(1.4rem, 3vw, 2.1rem); line-height: 1.4; margin: 18px 0; }
+      .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+      .answer {
+        appearance: none; border: 1px solid var(--line); background: rgba(255,255,255,0.02); color: var(--text);
+        padding: 16px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: left;
+      }
+      .answer:hover { border-color: rgba(76,201,240,0.7); }
+      .controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+      .btn {
+        appearance: none; border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--text);
+        padding: 10px 16px; border-radius: 12px; font-weight: 700; cursor: pointer;
+      }
+      .primary { background: linear-gradient(135deg, var(--accent), #ff7b00); color: #111; border: none; }
+      .status { color: var(--muted); }
+      .scoreboard { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+      .score-box {
+        flex: 1; min-width: 140px; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--line);
+      }
+      .score-box strong { display: block; font-size: 1.5rem; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="panel">
+        <div class="top">
+          <h1>Quiz Arena</h1>
+          <div class="meta">
+            <div class="pill" id="roundPill">Round 1</div>
+            <div class="pill" id="timePill">15s</div>
+          </div>
+        </div>
+
+        <div id="questionText" class="question">Loading question...</div>
+        <div id="answers" class="answers"></div>
+
+        <div class="controls">
+          <div class="status" id="statusText">Ready</div>
+          <button class="btn primary" id="nextBtn">Next</button>
+        </div>
+
+        <div class="scoreboard">
+          <div class="score-box"><strong id="scoreVal">0</strong>Score</div>
+          <div class="score-box"><strong id="streakVal">0</strong>Streak</div>
+          <div class="score-box"><strong id="correctVal">0</strong>Correct</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const questions = [
+        {
+          q: 'Which game is known for the phrase “Victory or defeat, every round matters”?',
+          answers: ['Street Fighter', 'Quiz Arena', 'Pong', 'Minecraft'],
+          correct: 1
+        },
+        {
+          q: 'What gives a player better momentum in a platform runner?',
+          answers: ['Jumping late', 'Maintaining rhythm', 'Standing still', 'Opening the menu'],
+          correct: 1
+        },
+        {
+          q: 'In basketball, the best shot usually comes from what?',
+          answers: ['Random guessing', 'Good timing and rhythm', 'Standing still', 'Spamming buttons'],
+          correct: 1
+        },
+        {
+          q: 'What makes a quiz challenge feel stronger?',
+          answers: ['No time pressure', 'Tension and streaks', 'More blank space', 'Lower volume'],
+          correct: 1
+        },
+        {
+          q: 'What is the best way to improve a game loop?',
+          answers: ['Keep everything random', 'Build clear rules and skill', 'Hide the objective', 'Remove feedback'],
+          correct: 1
+        }
+      ];
+
+      const state = {
+        index: 0,
+        score: 0,
+        streak: 0,
+        correct: 0,
+        timer: 15,
+        roundIndex: 1,
+        lock: false
+      };
+
+      const questionText = document.getElementById('questionText');
+      const answersEl = document.getElementById('answers');
+      const statusText = document.getElementById('statusText');
+      const nextBtn = document.getElementById('nextBtn');
+      const roundPill = document.getElementById('roundPill');
+      const timePill = document.getElementById('timePill');
+      const scoreVal = document.getElementById('scoreVal');
+      const streakVal = document.getElementById('streakVal');
+      const correctVal = document.getElementById('correctVal');
+
+      function renderQuestion() {
+        const q = questions[state.index];
+        questionText.textContent = q.q;
+        answersEl.innerHTML = '';
+
+        q.answers.forEach((answer, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'answer';
+          btn.textContent = answer;
+          btn.addEventListener('click', () => answerQuestion(i));
+          answersEl.appendChild(btn);
+        });
+
+        state.lock = false;
+        state.timer = 15;
+        roundPill.textContent = `Round ${state.roundIndex}`;
+        timePill.textContent = `${state.timer}s`;
+        statusText.textContent = 'Choose an answer';
+      }
+
+      function updateScoreboard() {
+        scoreVal.textContent = state.score;
+        streakVal.textContent = state.streak;
+        correctVal.textContent = state.correct;
+      }
+
+      function nextQuestion() {
+        state.index += 1;
+        state.roundIndex += 1;
+        if (state.index >= questions.length) {
+          questionText.textContent = 'Arena complete!';
+          answersEl.innerHTML = '';
+          statusText.textContent = `Final score: ${state.score}`;
+          nextBtn.disabled = true;
+          return;
+        }
+        renderQuestion();
+      }
+
+      function answerQuestion(choiceIndex) {
+        if (state.lock) return;
+        state.lock = true;
+
+        const q = questions[state.index];
+        const ans = Array.from(answersEl.children);
+
+        ans.forEach((button, i) => {
+          button.disabled = true;
+          if (i === q.correct) button.style.borderColor = 'rgba(127,227,108,0.9)';
+          if (i === choiceIndex && choiceIndex !== q.correct) button.style.borderColor = 'rgba(239,71,111,0.9)';
+        });
+
+        if (choiceIndex === q.correct) {
+          state.score += 100 + state.streak * 25;
+          state.streak += 1;
+          state.correct += 1;
+          statusText.textContent = 'Correct!';
+        } else {
+          state.streak = 0;
+          statusText.textContent = 'Wrong answer';
+        }
+
+        updateScoreboard();
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (state.lock || state.index >= questions.length) return;
+        nextQuestion();
+      });
+
+      setInterval(() => {
+        if (state.lock) return;
+        if (state.index >= questions.length) return;
+        state.timer -= 1;
+        timePill.textContent = `${Math.max(0, state.timer)}s`;
+        if (state.timer <= 0) {
+          state.lock = true;
+          const q = questions[state.index];
+          const ans = Array.from(answersEl.children);
+          ans.forEach((button, i) => {
+            button.disabled = true;
+            if (i === q.correct) button.style.borderColor = 'rgba(127,227,108,0.9)';
+          });
+          state.streak = 0;
+          statusText.textContent = 'Time up';
+        }
+      }, 1000);
+
+      renderQuestion();
+      updateScoreboard();
+    </script>
+  </body>
+</html>
