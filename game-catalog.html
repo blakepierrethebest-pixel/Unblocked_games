@@ -3,74 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GameHub Arcade Library</title>
+    <title>Game Library</title>
     <style>
       :root {
-        --bg: #09121d;
-        --panel: rgba(15, 23, 37, 0.94);
+        --bg: #081723;
+        --bg2: #10263d;
+        --panel: rgba(15, 25, 34, 0.94);
         --line: rgba(255,255,255,0.12);
         --text: #edf6ff;
-        --muted: #b9cfe9;
+        --muted: #bfd8f3;
         --accent: #ffb703;
-        --cyan: #4cc9f0;
       }
       * { box-sizing: border-box; }
       body {
-        margin: 0; min-height: 100vh; font-family: Arial, sans-serif; background: linear-gradient(180deg, #09121d, #0d2338 40%, #09121d); color: var(--text);
+        margin: 0; min-height: 100vh; font-family: Arial, sans-serif;
+        background: linear-gradient(180deg, var(--bg), var(--bg2));
+        color: var(--text);
       }
-      .wrap { max-width: 1280px; margin: 0 auto; padding: 28px 18px 60px; }
-      .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
-      h1 { margin: 0; color: var(--accent); font-size: clamp(2rem, 5vw, 3rem); }
-      .pill { padding: 9px 12px; border-radius: 999px; background: rgba(255,255,255,0.04); border: 1px solid var(--line); color: var(--muted); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; }
-      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+      .wrap { max-width: 1180px; margin: 0 auto; padding: 30px 18px 60px; }
+      h1 { margin: 0 0 10px; color: var(--accent); font-size: clamp(2rem, 5vw, 3rem); }
+      p { margin: 0 0 18px; color: var(--muted); }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
       .card {
-        display: block; text-decoration: none; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; transition: transform 0.15s ease, border-color 0.15s ease;
+        display: block; text-decoration: none; color: var(--text); border-radius: 18px; overflow: hidden;
+        border: 1px solid var(--line); background: var(--panel);
       }
-      .card:hover { transform: translateY(-3px); border-color: rgba(255,183,3,0.7); }
-      .thumb { height: 96px; display: grid; place-items: center; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, rgba(255,183,3,0.18), rgba(76,201,240,0.12)); font-size: 2.2rem; }
-      .info { padding: 14px; }
-      .info h3 { margin: 0 0 8px; font-size: 1rem; }
-      .info p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 0.8rem; }
+      .thumb { height: 108px; display: grid; place-items: center; font-size: 2.5rem; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, rgba(255,183,3,0.18), rgba(76,201,240,0.12)); }
+      .content { padding: 16px; }
+      .content h3 { margin: 0 0 8px; font-size: 1rem; }
+      .content p { margin: 0; font-size: 0.8rem; line-height: 1.5; color: var(--muted); }
     </style>
   </head>
   <body>
     <div class="wrap">
-      <div class="topbar">
-        <h1>Arcade Library</h1>
-        <div class="pill">30-game collection</div>
-      </div>
+      <h1>Game Library</h1>
+      <p>Curated arcade options focused on gameplay and polish.</p>
 
       <div class="grid">
-        <a class="card" href="index.html"><div class="thumb">🏠</div><div class="info"><h3>GameHub</h3><p>Main hub and launch page</p></div></a>
-        <a class="card" href="basketball-pro.html"><div class="thumb">🏀</div><div class="info"><h3>BasketBros Pro</h3><p>Fast basketball arena with upgrades</p></div></a>
-        <a class="card" href="spider-game.html"><div class="thumb">🕷️</div><div class="info"><h3>Spider City Swing</h3><p>Web-swing and collect runs</p></div></a>
-        <a class="card" href="powerscaler.html"><div class="thumb">🧠</div><div class="info"><h3>PowerScaler</h3><p>Power-scaling debate arena</p></div></a>
-        <a class="card" href="platformer.html"><div class="thumb">🦸</div><div class="info"><h3>City Sprint</h3><p>Platformer sprint challenge</p></div></a>
-        <a class="card" href="marvel-dc-quiz.html"><div class="thumb">🦇</div><div class="info"><h3>Marvel/DC Quiz</h3><p>Comic lore trivia round</p></div></a>
-        <a class="card" href="pong.html"><div class="thumb">🏓</div><div class="info"><h3>Pong</h3><p>Classic paddle showdown</p></div></a>
-        <a class="card" href="snake.html"><div class="thumb">🐍</div><div class="info"><h3>Snake</h3><p>Arcade survival and growth</p></div></a>
-        <a class="card" href="breakout.html"><div class="thumb">🧱</div><div class="info"><h3>Breakout</h3><p>Brick breaker challenge</p></div></a>
-        <a class="card" href="memory.html"><div class="thumb">🃏</div><div class="info"><h3>Memory Match</h3><p>Flip cards and match pairs</p></div></a>
-        <a class="card" href="tic-tac-toe.html"><div class="thumb">❌</div><div class="info"><h3>Tic-Tac-Toe</h3><p>Classic square battle</p></div></a>
-        <a class="card" href="2048.html"><div class="thumb">🔢</div><div class="info"><h3>2048</h3><p>Tile combining puzzle</p></div></a>
-        <a class="card" href="wordle.html"><div class="thumb">🔤</div><div class="info"><h3>Wordle</h3><p>Guess the hidden word</p></div></a>
-        <a class="card" href="runner.html"><div class="thumb">🏃</div><div class="info"><h3>Runner</h3><p>Endless obstacle dodge</p></div></a>
-        <a class="card" href="asteroids.html"><div class="thumb">☄️</div><div class="info"><h3>Asteroids</h3><p>Ship dodging and shooting</p></div></a>
-        <a class="card" href="racer.html"><div class="thumb">🏎️</div><div class="info"><h3>Racer</h3><p>Beach sprint and lane survival</p></div></a>
-        <a class="card" href="clicker.html"><div class="thumb">✨</div><div class="info"><h3>Clicker</h3><p>Tap and upgrade frenzy</p></div></a>
-        <a class="card" href="rhythm.html"><div class="thumb">🎵</div><div class="info"><h3>Rhythm Tap</h3><p>Hit the beats on time</p></div></a>
-        <a class="card" href="darts.html"><div class="thumb">🎯</div><div class="info"><h3>Darts</h3><p>Throw for the bullseye</p></div></a>
-        <a class="card" href="bossrush.html"><div class="thumb">👹</div><div class="info"><h3>Boss Rush</h3><p>High-pressure combat gauntlet</p></div></a>
-        <a class="card" href="#"><div class="thumb">⚽</div><div class="info"><h3>Football Kick</h3><p>Arcade soccer precision</p></div></a>
-        <a class="card" href="#"><div class="thumb">🎾</div><div class="info"><h3>Tennis Serve</h3><p>Serve and rally mode</p></div></a>
-        <a class="card" href="#"><div class="thumb">⛳</div><div class="info"><h3>Golf Mini</h3><p>Precision putting challenge</p></div></a>
-        <a class="card" href="#"><div class="thumb">🏒</div><div class="info"><h3>Hockey Rush</h3><p>Fast puck rush action</p></div></a>
-        <a class="card" href="#"><div class="thumb">🎲</div><div class="info"><h3>Dice Duel</h3><p>Luck-based faceoff</p></div></a>
-        <a class="card" href="#"><div class="thumb">🧠</div><div class="info"><h3>Logic Grid</h3><p>Pattern and deduction</p></div></a>
-        <a class="card" href="#"><div class="thumb">🃏</div><div class="info"><h3>Card Duel</h3><p>Single-card battlefield</p></div></a>
-        <a class="card" href="#"><div class="thumb">🏐</div><div class="info"><h3>Dodgeball</h3><p>Fast reflex challenge</p></div></a>
-        <a class="card" href="#"><div class="thumb">🚀</div><div class="info"><h3>Neon Drift</h3><p>Speed lane survival</p></div></a>
-        <a class="card" href="#"><div class="thumb">🌀</div><div class="info"><h3>Hex Grid</h3><p>Strategy field tactics</p></div></a>
+        <a class="card" href="basketball-pro.html">
+          <div class="thumb">🏀</div>
+          <div class="content"><h3>BasketBros Pro</h3><p>Arcade basketball with smoother shot flow and court pacing.</p></div>
+        </a>
+        <a class="card" href="spider-game.html">
+          <div class="thumb">🕷️</div>
+          <div class="content"><h3>Spider Swing</h3><p>Momentum-heavy aerial runner.</p></div>
+        </a>
+        <a class="card" href="platformer.html">
+          <div class="thumb">🦸</div>
+          <div class="content"><h3>City Sprint</h3><p>Platform runner challenge.</p></div>
+        </a>
+        <a class="card" href="powerscaler.html">
+          <div class="thumb">🧠</div>
+          <div class="content"><h3>PowerScaler</h3><p>Quick-fire reaction challenge.</p></div>
+        </a>
+        <a class="card" href="marvel-dc-quiz.html">
+          <div class="thumb">🦇</div>
+          <div class="content"><h3>Marvel/DC Quiz</h3><p>Fast trivia and score-based rounds.</p></div>
+        </a>
+        <a class="card" href="pong.html">
+          <div class="thumb">🏓</div>
+          <div class="content"><h3>Pong</h3><p>Fast paddle challenge.</p></div>
+        </a>
       </div>
     </div>
   </body>

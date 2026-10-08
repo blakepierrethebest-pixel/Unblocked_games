@@ -3,67 +3,65 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GameHub - Arcade</title>
+    <title>GameHub Arcade</title>
     <style>
       :root {
-        --bg-1: #060d17;
-        --bg-2: #10263f;
-        --panel: rgba(17, 31, 46, 0.94);
-        --panel-2: rgba(12, 20, 29, 0.9);
-        --line: rgba(255,255,255,0.1);
+        --bg1: #07141f;
+        --bg2: #0d2439;
+        --panel: rgba(12, 22, 32, 0.9);
+        --panel2: rgba(18, 33, 45, 0.96);
+        --line: rgba(255,255,255,0.12);
         --text: #edf6ff;
-        --muted: #b7cfe8;
+        --muted: #bdd6f0;
         --accent: #ffb703;
-        --accent-2: #ff7b00;
+        --accent2: #ff7b00;
         --cyan: #4cc9f0;
         --green: #90be6d;
         --red: #ef476f;
       }
       * { box-sizing: border-box; }
-      html, body { margin: 0; min-height: 100%; font-family: Arial, sans-serif; background: radial-gradient(circle at top, rgba(76,201,240,0.2), transparent 20%), linear-gradient(135deg, var(--bg-1), var(--bg-2) 40%, #091821); color: var(--text); }
-      body { min-height: 100vh; }
-      .shell { max-width: 1220px; margin: 0 auto; padding: 26px 18px 60px; }
-      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
-      .brand { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 800; letter-spacing: 0.04em; color: var(--accent); margin: 0; }
-      .chip { padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; background: rgba(255,255,255,0.04); }
+      html, body {
+        margin: 0; min-height: 100vh; font-family: Arial, sans-serif;
+        background: radial-gradient(circle at top, rgba(76,201,240,0.2), transparent 18%), linear-gradient(135deg, var(--bg1), var(--bg2) 42%, #081821 100%);
+        color: var(--text);
+      }
+      .shell { max-width: 1200px; margin: 0 auto; padding: 28px 18px 60px; }
+      .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+      .brand { margin: 0; font-size: clamp(2.2rem, 5vw, 4rem); color: var(--accent); letter-spacing: 0.04em; }
+      .chip { border: 1px solid var(--line); border-radius: 999px; padding: 9px 14px; color: var(--muted); background: rgba(255,255,255,0.03); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.12em; }
       .hero {
-        display: grid; grid-template-columns: 1.4fr 0.8fr; gap: 18px; margin-bottom: 28px;
+        display: grid; grid-template-columns: 1.4fr 0.8fr; gap: 16px; margin-bottom: 26px;
       }
       .panel {
-        background: var(--panel); border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
-        box-shadow: 0 24px 50px rgba(0,0,0,0.25);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 22px; overflow: hidden;
+        box-shadow: 0 28px 50px rgba(0,0,0,0.25);
       }
-      .hero-main { padding: 22px 22px 18px; }
-      .hero-main h2 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 3rem); color: var(--accent); }
-      .hero-main p { margin: 0; color: var(--muted); line-height: 1.75; font-size: 1rem; }
-      .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+      .hero-main { padding: 24px 22px 20px; }
+      .hero-main h2 { margin: 0 0 12px; font-size: clamp(2rem, 3.5vw, 3.2rem); color: var(--accent); }
+      .hero-main p { margin: 0; line-height: 1.7; color: var(--muted); font-size: 1rem; }
+      .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
       .btn {
-        display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 700; padding: 12px 18px; border-radius: 12px; border: 1px solid transparent; transition: transform 0.2s ease, border-color 0.2s ease;
+        display: inline-flex; align-items: center; justify-content: center; text-decoration: none;
+        padding: 12px 18px; border-radius: 12px; font-weight: 700; border: 1px solid transparent; transition: transform 0.15s ease;
       }
       .btn:hover { transform: translateY(-1px); }
-      .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #111; }
-      .btn-secondary { color: var(--text); background: rgba(255,255,255,0.04); border-color: var(--line); }
-      .hero-side {
-        display: grid; grid-template-rows: repeat(3, minmax(60px, 1fr)); gap: 12px; padding: 16px;
-      }
-      .stat {
-        border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,0.03); padding: 14px 16px;
-      }
-      .stat strong { display: block; font-size: 1.5rem; color: var(--cyan); }
-      .stat span { color: var(--muted); font-size: 0.82rem; }
-      .library { margin-top: 14px; }
-      .library-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
-      .library-head h3 { margin: 0; font-size: 1.4rem; color: var(--text); }
+      .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #111; }
+      .btn-secondary { background: rgba(255,255,255,0.04); color: var(--text); border-color: var(--line); }
+      .side { padding: 16px; display: grid; grid-template-rows: repeat(3, minmax(70px, 1fr)); gap: 12px; }
+      .stat { background: rgba(255,255,255,0.03); border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; }
+      .stat strong { display: block; font-size: 1.6rem; color: var(--cyan); }
+      .stat span { color: var(--muted); font-size: 0.78rem; }
+      .library-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+      .library-head h3 { margin: 0; font-size: 1.4rem; }
       .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-      .game-card {
-        display: block; text-decoration: none; color: var(--text); background: rgba(14, 22, 34, 0.92); border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
-        transition: transform 0.18s ease, border-color 0.18s ease;
+      .card {
+        display: block; text-decoration: none; color: var(--text); background: var(--panel2); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; transition: transform 0.15s ease, border-color 0.15s ease;
       }
-      .game-card:hover { transform: translateY(-3px); border-color: rgba(255,183,3,0.7); }
-      .thumb { height: 110px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, rgba(255,183,3,0.18), rgba(76,201,240,0.14)); }
-      .game-card h4 { margin: 0 0 8px; font-size: 1rem; }
-      .game-card p { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.5; }
-      .game-body { padding: 16px; }
+      .card:hover { transform: translateY(-2px); border-color: rgba(255,183,3,0.7); }
+      .thumb { height: 108px; display: grid; place-items: center; font-size: 2.6rem; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, rgba(255,183,3,0.18), rgba(76,201,240,0.12)); }
+      .content { padding: 16px; }
+      .content h4 { margin: 0 0 8px; font-size: 1rem; }
+      .content p { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.5; }
       @media (max-width: 760px) {
         .hero { grid-template-columns: 1fr; }
       }
@@ -73,80 +71,70 @@
     <div class="shell">
       <div class="topbar">
         <h1 class="brand">GameHub</h1>
-        <div class="chip">Arcade Collection</div>
+        <div class="chip">Arcade + sports + action</div>
       </div>
 
       <div class="hero">
         <div class="panel hero-main">
-          <h2>Play the next era of arcade games</h2>
-          <p>GameHub is being rebuilt around quality, smoother mechanics, and proper game feel. The core experience is now focused on polished arcade sports, action, and quick competition games that actually feel fun to play.</p>
-          <div class="cta-row">
+          <h2>Built to feel fun, not fake.</h2>
+          <p>The project is being rebuilt around actual arcade quality. The focus is on smooth controls, clean visuals, and a stronger gameplay loop — instead of low-effort mini-game placeholders.</p>
+          <div class="cta">
             <a class="btn btn-primary" href="basketball-pro.html">Play Basketball</a>
-            <a class="btn btn-secondary" href="game-catalog.html">Browse All Games</a>
+            <a class="btn btn-secondary" href="game-catalog.html">Browse Library</a>
           </div>
         </div>
 
-        <div class="panel hero-side">
-          <div class="stat"><strong>1</strong><span>core rebuild</span></div>
-          <div class="stat"><strong>6</strong><span>active game pages</span></div>
-          <div class="stat"><strong>∞</strong><span>future expansions</span></div>
+        <div class="panel side">
+          <div class="stat"><strong>1</strong><span>main flagship rebuild</span></div>
+          <div class="stat"><strong>5</strong><span>working arcade pages</span></div>
+          <div class="stat"><strong>∞</strong><span>future upgrades</span></div>
         </div>
       </div>
 
-      <div class="library">
-        <div class="library-head">
-          <h3>Featured Games</h3>
-        </div>
+      <div class="library-head">
+        <h3>Featured Games</h3>
+      </div>
 
-        <div class="grid">
-          <a class="game-card" href="basketball-pro.html">
-            <div class="thumb">🏀</div>
-            <div class="game-body">
-              <h4>BasketBros Pro</h4>
-              <p>Arcade basketball with real court pacing and shot flow.</p>
-            </div>
-          </a>
+      <div class="grid">
+        <a class="card" href="basketball-pro.html">
+          <div class="thumb">🏀</div>
+          <div class="content">
+            <h4>BasketBros Pro</h4>
+            <p>Arcade basketball with stronger court flow and shot feel.</p>
+          </div>
+        </a>
 
-          <a class="game-card" href="spider-game.html">
-            <div class="thumb">🕷️</div>
-            <div class="game-body">
-              <h4>Spider Swing</h4>
-              <p>Fast swinging action and aerial collection runs.</p>
-            </div>
-          </a>
+        <a class="card" href="spider-game.html">
+          <div class="thumb">🕷️</div>
+          <div class="content">
+            <h4>Spider Swing</h4>
+            <p>Aerial action and momentum-based movement.</p>
+          </div>
+        </a>
 
-          <a class="game-card" href="platformer.html">
-            <div class="thumb">🦸</div>
-            <div class="game-body">
-              <h4>City Sprint</h4>
-              <p>Jump, dodge, collect crystals, and finish the run.</p>
-            </div>
-          </a>
+        <a class="card" href="platformer.html">
+          <div class="thumb">🦸</div>
+          <div class="content">
+            <h4>City Sprint</h4>
+            <p>Fast platform run with checkpoints and dodge logic.</p>
+          </div>
+        </a>
 
-          <a class="game-card" href="marvel-dc-quiz.html">
-            <div class="thumb">🦇</div>
-            <div class="game-body">
-              <h4>Marvel/DC Quiz</h4>
-              <p>Comic trivia scored in rounds with quick decisions.</p>
-            </div>
-          </a>
+        <a class="card" href="powerscaler.html">
+          <div class="thumb">🧠</div>
+          <div class="content">
+            <h4>PowerScaler</h4>
+            <p>Quick scanning challenge with arena-style reactions.</p>
+          </div>
+        </a>
 
-          <a class="game-card" href="pong.html">
-            <div class="thumb">🏓</div>
-            <div class="game-body">
-              <h4>Pong</h4>
-              <p>Classic and simple reflex challenge.</p>
-            </div>
-          </a>
-
-          <a class="game-card" href="game-catalog.html">
-            <div class="thumb">🎮</div>
-            <div class="game-body">
-              <h4>Full Library</h4>
-              <p>Browse the rest of the arcade lineup.</p>
-            </div>
-          </a>
-        </div>
+        <a class="card" href="marvel-dc-quiz.html">
+          <div class="thumb">🦇</div>
+          <div class="content">
+            <h4>Marvel/DC Quiz</h4>
+            <p>Quiz rounds with fast answer flow and score tracking.</p>
+          </div>
+        </a>
       </div>
     </div>
   </body>
