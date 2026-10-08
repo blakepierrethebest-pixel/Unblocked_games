@@ -7,27 +7,31 @@
     <style>
       * { box-sizing: border-box; }
       html, body {
-        margin: 0; min-height: 100vh; background: linear-gradient(180deg, #07151d, #10293c 48%, #091723 100%);
-        color: white; font-family: Arial, sans-serif;
+        margin: 0; min-height: 100vh; background: linear-gradient(180deg, #07151d, #112a3c 50%, #081823 100%);
+        color: #edf6ff; font-family: Arial, sans-serif;
       }
       body {
         display: grid; place-items: center;
       }
       .game-wrap {
-        position: relative; width: min(96vw, 980px); margin: 18px auto;
+        position: relative; width: min(96vw, 980px); margin: 16px auto;
       }
       .hud {
-        position: absolute; top: 12px; left: 12px; right: 12px; display: flex;
+        position: absolute; top: 12px; left: 14px; right: 14px; display: flex;
         justify-content: space-between; align-items: center; gap: 12px; pointer-events: none;
       }
       .badge {
-        background: rgba(8, 16, 22, 0.72); border: 1px solid rgba(255,255,255,0.14);
-        border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 0.96rem;
+        background: rgba(7, 19, 26, 0.78);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 0.95rem;
+        letter-spacing: 0.02em;
       }
       canvas {
-        display: block; width: 100%; height: auto; border-radius: 18px; border: 2px solid rgba(255,255,255,0.12);
-        box-shadow: 0 28px 60px rgba(0,0,0,0.28);
-        background: linear-gradient(180deg, #0a1a25, #173147 60%, #0e1722);
+        display: block; width: 100%; height: auto;
+        border-radius: 18px;
+        border: 2px solid rgba(255,255,255,0.12);
+        background: linear-gradient(180deg, #0a1a24, #132f46 55%, #091520);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.32);
       }
     </style>
   </head>
@@ -35,8 +39,8 @@
     <div class="game-wrap">
       <div class="hud">
         <div class="badge" id="scoreText">You 0 - 0 CPU</div>
-        <div class="badge" id="timeText">45.0</div>
-        <div class="badge" id="statusText">Drive to the hoop</div>
+        <div class="badge" id="timeText">60.0</div>
+        <div class="badge" id="statusText">Drive to the rim</div>
       </div>
       <canvas id="game" width="980" height="620"></canvas>
     </div>
@@ -48,19 +52,18 @@
       const state = {
         playerScore: 0,
         cpuScore: 0,
-        timeLeft: 45,
+        timeLeft: 60,
         lastTime: 0,
-        keys: { left: false, right: false, jump: false, shoot: false },
+        keys: { left: false, right: false, up: false, down: false, shoot: false },
+        gameOver: false,
       };
 
       const player = {
-        x: 200,
+        x: 175,
         y: 470,
-        w: 28,
-        h: 56,
-        vx: 0,
-        vy: 0,
-        grounded: true,
+        w: 26,
+        h: 52,
+        speed: 5.2,
         hasBall: true,
         facing: 1,
       };
@@ -68,104 +71,110 @@
       const cpu = {
         x: 720,
         y: 470,
-        w: 28,
-        h: 56,
-        vx: 0,
-        vy: 0,
-        grounded: true,
+        w: 26,
+        h: 52,
+        speed: 4.6,
         hasBall: false,
         facing: -1,
       };
 
-      const hoop = { x: 820, y: 134, r: 18 };
+      const hoop = { x: 820, y: 155, radius: 18 };
+      const ball = { x: 0, y: 0, vx: 0, vy: 0, r: 10, carrier: 'player', inAir: false };
 
-      const ball = {
-        x: 0,
-        y: 0,
-        vx: 0,
-        vy: 0,
-        r: 10,
-        carrier: 'player',
-        inAir: false,
-      };
+      function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
+      }
 
       function resetPositions() {
-        player.x = 200; player.y = 470; player.vx = 0; player.vy = 0; player.grounded = true; player.hasBall = true; player.facing = 1;
-        cpu.x = 720; cpu.y = 470; cpu.vx = 0; cpu.vy = 0; cpu.grounded = true; cpu.hasBall = false; cpu.facing = -1;
+        player.x = 175; player.y = 470; player.hasBall = true; player.facing = 1;
+        cpu.x = 720; cpu.y = 470; cpu.hasBall = false; cpu.facing = -1;
         ball.x = player.x + 12; ball.y = player.y - 18; ball.vx = 0; ball.vy = 0; ball.inAir = false; ball.carrier = 'player';
       }
 
-      function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
-
-      function updatePlayer() {
-        let move = 0;
-        if (state.keys.left) move -= 1;
-        if (state.keys.right) move += 1;
-        player.vx = move * 5.5;
-        player.x += player.vx;
-        player.x = clamp(player.x, 100, 350);
-        player.facing = move < 0 ? -1 : move > 0 ? 1 : player.facing;
-
-        if (state.keys.jump && player.grounded) {
-          player.vy = -14;
-          player.grounded = false;
-        }
-
-        player.vy += 0.78;
-        player.y += player.vy;
-        if (player.y >= 470) {
-          player.y = 470;
-          player.vy = 0;
-          player.grounded = true;
-        }
-
-        if (player.hasBall) {
-          ball.x = player.x + 10;
-          ball.y = player.y - 18 + Math.sin(Date.now() * 0.02) * 2.4;
-        }
-
-        if (state.keys.shoot && player.hasBall) {
-          shotForPlayer();
-        }
-      }
-
-      function shotForPlayer() {
-        const targetX = hoop.x + (Math.random() * 26 - 13);
-        const dx = targetX - (player.x + 10);
-        const dy = hoop.y - (player.y - 18);
-        ball.carrier = 'air';
+      function playerShoot() {
+        if (!player.hasBall || ball.inAir || state.gameOver) return;
+        const targetX = hoop.x + (Math.random() * 30 - 15);
+        const targetY = hoop.y + 14;
+        const dx = targetX - (player.x + 12);
+        const dy = targetY - (player.y - 18);
         ball.inAir = true;
-        ball.vx = dx * 0.12;
-        ball.vy = -Math.abs(dy) * 0.14 - 9.5;
+        ball.carrier = 'air';
+        ball.vx = dx * 0.13;
+        ball.vy = -Math.abs(dy) * 0.14 - 10.4;
         player.hasBall = false;
         state.keys.shoot = false;
       }
 
-      function updateCPU() {
-        const targetX = player.x + 120;
-        cpu.vx = (targetX - cpu.x) * 0.04;
-        cpu.x += cpu.vx;
-        cpu.x = clamp(cpu.x, 590, 860);
-        cpu.facing = cpu.x < player.x ? -1 : 1;
+      function cpuShoot() {
+        if (cpu.hasBall === false || ball.inAir || state.gameOver) return;
+        const targetX = 190 + Math.random() * 30;
+        const dx = targetX - cpu.x;
+        const dy = hoop.y - (cpu.y - 18);
+        ball.inAir = true;
+        ball.carrier = 'air';
+        ball.vx = dx * 0.13;
+        ball.vy = -Math.abs(dy) * 0.14 - 10.1;
+        cpu.hasBall = false;
+      }
 
-        if (!cpu.hasBall && !ball.inAir && Math.random() < 0.012) {
+      function updatePlayer() {
+        let dx = 0;
+        let dy = 0;
+        if (state.keys.left) dx -= 1;
+        if (state.keys.right) dx += 1;
+        if (state.keys.up) dy -= 1;
+        if (state.keys.down) dy += 1;
+
+        player.x = clamp(player.x + dx * player.speed, 110, 360);
+        player.y = clamp(player.y + dy * player.speed, 400, 560);
+        if (dx < 0) player.facing = -1;
+        if (dx > 0) player.facing = 1;
+
+        if (player.hasBall) {
+          ball.x = player.x + 12;
+          ball.y = player.y - 18 + Math.sin(performance.now() * 0.02) * 2.2;
+        }
+
+        if (state.keys.shoot) {
+          playerShoot();
+        }
+      }
+
+      function updateCPU() {
+        if (ball.inAir) return;
+
+        if (cpu.hasBall) {
+          const targetX = 760;
+          const targetY = 450;
+          cpu.x += (targetX - cpu.x) * 0.06;
+          cpu.y += (targetY - cpu.y) * 0.06;
+          cpu.x = clamp(cpu.x, 560, 860);
+          cpu.y = clamp(cpu.y, 410, 560);
+
+          if (Math.random() < 0.03) {
+            cpuShoot();
+          }
+
+          ball.x = cpu.x - 10;
+          ball.y = cpu.y - 14 + Math.sin(performance.now() * 0.02 + 40) * 2.0;
+          return;
+        }
+
+        const shouldTakeBall = Math.random() < 0.02;
+        if (shouldTakeBall && !player.hasBall) {
           cpu.hasBall = true;
           ball.carrier = 'cpu';
         }
 
+        const targetX = player.x + 90;
+        cpu.x += (targetX - cpu.x) * 0.045;
+        cpu.x = clamp(cpu.x, 590, 860);
+        cpu.y += (player.y - cpu.y) * 0.05;
+        cpu.y = clamp(cpu.y, 410, 560);
+
         if (cpu.hasBall) {
-          ball.x = cpu.x - 10;
-          ball.y = cpu.y - 18 + Math.sin(Date.now() * 0.02 + 30) * 2.2;
-          if (Math.random() < 0.03) {
-            const targetX = 180 + Math.random() * 28;
-            const dx = targetX - cpu.x;
-            const dy = hoop.y - (cpu.y - 18);
-            ball.carrier = 'air';
-            ball.inAir = true;
-            ball.vx = dx * 0.12;
-            ball.vy = -Math.abs(dy) * 0.14 - 9.5;
-            cpu.hasBall = false;
-          }
+          ball.x = cpu.x - 12;
+          ball.y = cpu.y - 18 + Math.sin(performance.now() * 0.02 + 40) * 2.1;
         }
       }
 
@@ -176,14 +185,14 @@
         ball.y += ball.vy;
         ball.vy += 0.42;
 
-        const hoopLeft = hoop.x - 32;
-        const hoopRight = hoop.x + 32;
-        const hoopTop = hoop.y - 20;
-        const hoopBottom = hoop.y + 18;
+        const rimLeft = hoop.x - 36;
+        const rimRight = hoop.x + 36;
+        const rimTop = hoop.y - 6;
+        const rimBottom = hoop.y + 24;
 
-        if (ball.x > hoopLeft && ball.x < hoopRight && ball.y > hoopTop && ball.y < hoopBottom && ball.vy > 0) {
-          const scored = ball.x > hoop.x - 12 && ball.x < hoop.x + 12 && ball.y > hoop.y - 10 && ball.y < hoop.y + 8;
-          if (scored) {
+        if (ball.x > rimLeft && ball.x < rimRight && ball.y > rimTop && ball.y < rimBottom && ball.vy > 0) {
+          const centerHit = ball.x > hoop.x - 13 && ball.x < hoop.x + 13 && ball.y > hoop.y - 8 && ball.y < hoop.y + 10;
+          if (centerHit) {
             if (ball.x < canvas.width / 2) {
               state.playerScore += 2;
               document.getElementById('statusText').textContent = 'Nice bucket!';
@@ -191,26 +200,20 @@
               state.cpuScore += 2;
               document.getElementById('statusText').textContent = 'CPU scores';
             }
-            ball.inAir = false; ball.vx = 0; ball.vy = 0; ball.carrier = 'player';
-            resetPositions();
+            ball.inAir = false; ball.vx = 0; ball.vy = 0; resetPositions();
             return;
           }
         }
 
-        if (ball.y > 580) {
-          const shotFromLeft = ball.x < canvas.width / 2;
+        if (ball.y > 570) {
           ball.inAir = false; ball.vx = 0; ball.vy = 0;
-          if (shotFromLeft) {
-            player.hasBall = true;
-            ball.carrier = 'player';
-            ball.x = player.x + 12;
-            ball.y = player.y - 18;
+          if (ball.x < canvas.width / 2) {
+            player.hasBall = true; ball.carrier = 'player';
+            ball.x = player.x + 12; ball.y = player.y - 18;
             document.getElementById('statusText').textContent = 'Rebound';
           } else {
-            cpu.hasBall = true;
-            ball.carrier = 'cpu';
-            ball.x = cpu.x - 10;
-            ball.y = cpu.y - 18;
+            cpu.hasBall = true; ball.carrier = 'cpu';
+            ball.x = cpu.x - 12; ball.y = cpu.y - 18;
             document.getElementById('statusText').textContent = 'CPU rebound';
           }
         }
@@ -218,48 +221,63 @@
 
       function drawCourt() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#081d2a';
+
+        const bg = ctx.createLinearGradient(0, 0, 0, canvas.height);
+        bg.addColorStop(0, '#0b1e2a');
+        bg.addColorStop(1, '#183448');
+        ctx.fillStyle = bg;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = '#1f7c6d';
-        ctx.fillRect(0, 530, canvas.width, 90);
+        ctx.fillStyle = '#1f7b6c';
+        ctx.fillRect(0, 520, canvas.width, 100);
 
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.52)';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(90, 90); ctx.lineTo(90, 530); ctx.lineTo(900, 530); ctx.lineTo(900, 90);
+        ctx.moveTo(80, 80); ctx.lineTo(80, 520); ctx.lineTo(900, 520); ctx.lineTo(900, 80);
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.moveTo(490, 90); ctx.lineTo(490, 530); ctx.stroke();
+        ctx.moveTo(490, 80); ctx.lineTo(490, 520); ctx.stroke();
         ctx.beginPath();
-        ctx.arc(490, 150, 82, 0, Math.PI * 2); ctx.stroke();
+        ctx.arc(490, 132, 82, 0, Math.PI * 2); ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(490, 155, 18, 0, Math.PI * 2); ctx.stroke();
 
         ctx.fillStyle = '#ffb703';
-        ctx.fillRect(790, 120, 18, 56);
-        ctx.fillRect(782, 138, 34, 10);
+        ctx.fillRect(785, 118, 18, 58);
+        ctx.fillRect(770, 143, 48, 10);
         ctx.fillStyle = '#edf6ff';
-        ctx.fillRect(840, 136, 48, 10);
+        ctx.fillRect(825, 138, 44, 10);
 
-        ctx.fillStyle = 'rgba(255,255,255,0.08)';
-        for (let i = 0; i < 14; i++) {
+        ctx.fillStyle = '#0c2636';
+        for (let i = 0; i < 12; i++) {
           const x = 50 + i * 62;
-          ctx.fillRect(x, 452, 38, 75);
+          const height = 44 + (i % 4) * 30;
+          ctx.fillRect(x, 520 - height, 42, height);
         }
       }
 
       function drawPlayer(entity, color) {
+        const bodyX = entity.x - entity.w / 2;
+        const bodyY = entity.y - entity.h / 2;
+
         ctx.fillStyle = color;
-        ctx.fillRect(entity.x, entity.y, entity.w, entity.h);
-        ctx.fillStyle = '#dfe9ff';
-        ctx.fillRect(entity.x + 10, entity.y - 12, 8, 12);
-        ctx.fillStyle = '#111';
-        ctx.fillRect(entity.x + 11, entity.y + 18, 6, 16);
+        ctx.fillRect(bodyX, bodyY, entity.w, entity.h);
+
+        ctx.fillStyle = '#f2f7ff';
+        ctx.beginPath();
+        ctx.arc(bodyX + entity.w / 2, bodyY - 12, 10, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#f2f7ff';
+        ctx.fillRect(bodyX + 10, bodyY + entity.h - 4, 6, 18);
+        ctx.fillRect(bodyX + entity.w - 16, bodyY + entity.h - 4, 6, 18);
       }
 
       function drawBall() {
         if (ball.carrier === 'player') {
-          ball.x = player.x + 10; ball.y = player.y - 18;
+          ball.x = player.x + 12; ball.y = player.y - 20;
         }
         if (ball.carrier === 'cpu') {
           ball.x = cpu.x - 10; ball.y = cpu.y - 18;
@@ -269,7 +287,7 @@
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#c59600';
+        ctx.strokeStyle = '#d8aa18';
         ctx.lineWidth = 2;
         ctx.stroke();
       }
@@ -294,17 +312,22 @@
         const delta = (timestamp - state.lastTime) / 1000;
         state.lastTime = timestamp;
 
-        state.timeLeft -= delta;
-        if (state.timeLeft <= 0) {
-          state.timeLeft = 0;
-          document.getElementById('statusText').textContent = state.playerScore > state.cpuScore ? 'Victory!' : 'Game over';
+        if (!state.gameOver) {
+          state.timeLeft -= delta;
+          if (state.timeLeft <= 0) {
+            state.timeLeft = 0;
+            state.gameOver = true;
+            document.getElementById('statusText').textContent = state.playerScore > state.cpuScore ? 'Victory!' : 'Game over';
+          }
         }
 
-        updatePlayer();
-        updateCPU();
-        updateBall();
-        render();
+        if (!state.gameOver) {
+          updatePlayer();
+          updateCPU();
+          updateBall();
+        }
 
+        render();
         document.getElementById('scoreText').textContent = `You ${state.playerScore} - ${state.cpuScore} CPU`;
         document.getElementById('timeText').textContent = `${state.timeLeft.toFixed(1)}`;
 
@@ -315,7 +338,8 @@
         const key = event.key.toLowerCase();
         if (key === 'a' || event.key === 'ArrowLeft') state.keys.left = true;
         if (key === 'd' || event.key === 'ArrowRight') state.keys.right = true;
-        if (key === 'w' || event.key === 'ArrowUp') state.keys.jump = true;
+        if (key === 'w' || event.key === 'ArrowUp') state.keys.up = true;
+        if (key === 's' || event.key === 'ArrowDown') state.keys.down = true;
         if (key === ' ' || key === 'f') state.keys.shoot = true;
       });
 
@@ -323,7 +347,8 @@
         const key = event.key.toLowerCase();
         if (key === 'a' || event.key === 'ArrowLeft') state.keys.left = false;
         if (key === 'd' || event.key === 'ArrowRight') state.keys.right = false;
-        if (key === 'w' || event.key === 'ArrowUp') state.keys.jump = false;
+        if (key === 'w' || event.key === 'ArrowUp') state.keys.up = false;
+        if (key === 's' || event.key === 'ArrowDown') state.keys.down = false;
       });
 
       resetPositions();
