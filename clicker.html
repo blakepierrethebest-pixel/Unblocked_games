@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clicker</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background:#091823; color:white; font-family:Arial,sans-serif; }
+      .panel { width: 360px; padding: 22px; border-radius: 18px; background: rgba(19,31,46,0.92); border:1px solid rgba(255,255,255,0.12); }
+      button { display:block; width:100%; margin-top: 12px; padding: 18px 12px; border:none; border-radius: 12px; background: linear-gradient(135deg, #ffb703, #ff7b00); color:#101010; font-weight:800; font-size:1.2rem; cursor:pointer; }
+      .score { font-size: 2rem; font-weight: 800; text-align:center; }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <div class="score" id="score">0</div>
+      <button id="tap">Tap!</button>
+    </div>
+    <script>
+      let score = 0;
+      document.getElementById('tap').addEventListener('click', () => {
+        score += 1;
+        document.getElementById('score').textContent = score;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Racer</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background:#081822; color:white; font-family:Arial,sans-serif; }
+      canvas { background: #0f1d2d; border: 2px solid rgba(255,255,255,0.12); }
+    </style>
+  </head>
+  <body>
+    <canvas id="game" width="760" height="420"></canvas>
+    <script>
+      const canvas = document.getElementById('game'); const ctx = canvas.getContext('2d');
+      const player = { x: 120, y: 200, w: 30, h: 16, speed: 4 };
+      const track = { y: 40, h: 340 };
+      const enemies = [{ x: 700, y: 80, w: 20, h: 16 }, { x: 900, y: 230, w: 20, h: 16 }, { x: 1100, y: 340, w: 20, h: 16 }];
+      let score = 0;
+      let moveUp = false, moveDown = false;
+      document.addEventListener('keydown', e => { if (e.key === 'ArrowUp') moveUp = true; if (e.key === 'ArrowDown') moveDown = true; });
+      document.addEventListener('keyup', e => { if (e.key === 'ArrowUp') moveUp = false; if (e.key === 'ArrowDown') moveDown = false; });
+      function update() {
+        if (moveUp) player.y -= player.speed;
+        if (moveDown) player.y += player.speed;
+        player.y = Math.max(track.y, Math.min(track.y + track.h - player.h, player.y));
+        for (const e of enemies) { e.x -= 4; if (e.x + e.w < 0) { e.x = 800 + Math.random() * 260; score += 10; } }
+      }
+      function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#091b2d'; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle='#3b6ea5'; ctx.fillRect(0, track.y, canvas.width, track.h);
+        ctx.fillStyle='#dfe9ff'; ctx.fillRect(player.x, player.y, player.w, player.h);
+        for (const e of enemies) { ctx.fillStyle='#ef476f'; ctx.fillRect(e.x, e.y, e.w, e.h); }
+        ctx.fillStyle='#fff'; ctx.font='bold 22px Arial'; ctx.fillText(`Score: ${score}`, 20, 30);
+      }
+      function frame(){ update(); draw(); requestAnimationFrame(frame); }
+      frame();
+    </script>
+  </body>
+</html>

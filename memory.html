@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory Match</title>
+    <style>
+      body { margin:0; font-family: Arial, sans-serif; background: #091824; color: white; min-height: 100vh; display:grid; place-items:center; }
+      .board { display: grid; grid-template-columns: repeat(4, 90px); gap: 12px; }
+      .card { width: 90px; height: 90px; border-radius: 14px; display:grid; place-items:center; font-size: 2rem; background: #1d3354; border: 1px solid rgba(255,255,255,0.12); cursor:pointer; }
+      .card.flipped { background: #ffb703; color: #0d1b2a; }
+    </style>
+  </head>
+  <body>
+    <div class="board" id="board"></div>
+    <script>
+      const symbols = ['🍎','🍋','🍇','🍉','🍒','🍊'];
+      let deck = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+      let selected = [];
+      let matched = 0;
+      const board = document.getElementById('board');
+
+      function createBoard() {
+        board.innerHTML = '';
+        deck.forEach((symbol, index) => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.dataset.index = index;
+          card.dataset.value = symbol;
+          card.textContent = '?';
+          card.addEventListener('click', () => reveal(card));
+          board.appendChild(card);
+        });
+      }
+
+      function reveal(card) {
+        if (card.classList.contains('flipped') || selected.length >= 2) return;
+        card.classList.add('flipped');
+        card.textContent = card.dataset.value;
+        selected.push(card);
+        if (selected.length === 2) {
+          setTimeout(checkMatch, 500);
+        }
+      }
+
+      function checkMatch() {
+        const [a, b] = selected;
+        if (a.dataset.value === b.dataset.value) {
+          a.style.opacity = '0.5';
+          b.style.opacity = '0.5';
+          matched += 2;
+          if (matched === deck.length) alert('You won!');
+        } else {
+          a.textContent = '?';
+          b.textContent = '?';
+          a.classList.remove('flipped');
+          b.classList.remove('flipped');
+        }
+        selected = [];
+      }
+
+      createBoard();
+    </script>
+  </body>
+</html>

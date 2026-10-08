@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhythm Tap</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background:#091821; color:white; font-family:Arial,sans-serif; }
+      .box { width: 300px; height: 300px; border-radius: 24px; background: #1c324a; border:2px solid rgba(255,255,255,0.12); display:grid; place-items:center; font-size: 2rem; font-weight:800; cursor:pointer; }
+      .status { margin-top: 14px; text-align:center; color:#4cc9f0; }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="box" id="box">TAP</div>
+      <div class="status" id="status">Ready</div>
+    </div>
+    <script>
+      const box = document.getElementById('box');
+      const status = document.getElementById('status');
+      let active = false;
+      setInterval(() => {
+        active = !active;
+        box.style.background = active ? '#ffb703' : '#1c324a';
+        box.style.color = active ? '#0d1a2a' : '#fff';
+        status.textContent = active ? 'Hit now!' : 'Wait...';
+      }, 900);
+      box.addEventListener('click', () => {
+        if (active) {
+          status.textContent = 'Perfect!';
+        } else {
+          status.textContent = 'Too early!';
+        }
+      });
+    </script>
+  </body>
+</html>

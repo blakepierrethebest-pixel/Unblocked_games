@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asteroids</title>
+    <style>
+      body { margin:0; min-height:100vh; display:grid; place-items:center; background:#070d18; color:white; font-family:Arial,sans-serif; }
+      canvas { border: 2px solid rgba(255,255,255,0.12); background: #091827; }
+    </style>
+  </head>
+  <body>
+    <canvas id="game" width="800" height="500"></canvas>
+    <script>
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const ship = { x: 400, y: 250, r: 16, angle: 0, speed: 5 };
+      const bullets = [];
+      const asteroids = [
+        { x: 100, y: 120, r: 26, vx: 1.5, vy: 1 },
+        { x: 650, y: 140, r: 18, vx: -1.2, vy: 1.4 },
+        { x: 520, y: 380, r: 24, vx: -1.4, vy: -1.2 }
+      ];
+      let score = 0;
+      const keys = { left:false, right:false, up:false };
+      function update() {
+        if (keys.left) ship.angle -= 0.09;
+        if (keys.right) ship.angle += 0.09;
+        if (keys.up) {
+          ship.x += Math.cos(ship.angle) * ship.speed;
+          ship.y += Math.sin(ship.angle) * ship.speed;
+        }
+        ship.x = (ship.x + canvas.width) % canvas.width;
+        ship.y = (ship.y + canvas.height) % canvas.height;
+        for (let i = bullets.length - 1; i >= 0; i--) {
+          bullets[i].x += bullets[i].vx; bullets[i].y += bullets[i].vy;
+          if (bullets[i].x < 0 || bullets[i].x > canvas.width || bullets[i].y < 0 || bullets[i].y > canvas.height) bullets.splice(i, 1);
+        }
+        for (const a of asteroids) {
+          a.x += a.vx; a.y += a.vy;
+          if (a.x < -40 || a.x > canvas.width + 40) a.vx *= -1;
+          if (a.y < -40 || a.y > canvas.height + 40) a.vy *= -1;
+        }
+      }
+      function draw() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.translate(ship.x, ship.y); ctx.rotate(ship.angle);
+        ctx.fillStyle = '#edf6ff'; ctx.beginPath(); ctx.moveTo(16,0); ctx.lineTo(-10,10); ctx.lineTo(-6,0); ctx.lineTo(-10,-10); ctx.closePath(); ctx.fill(); ctx.setTransform(1,0,0,1,0,0);
+        for (const b of bullets) { ctx.fillStyle = '#ffb703'; ctx.fillRect(b.x, b.y, 4, 4); }
+        for (const a of asteroids) { ctx.fillStyle = '#90be6d'; ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI*2); ctx.fill(); }
+        ctx.font = 'bold 22px Arial'; ctx.fillText(`Score: ${score}`, 16, 30);
+      }
+      window.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') keys.left = true; if (e.key === 'ArrowRight') keys.right = true; if (e.key === 'ArrowUp') keys.up = true; if (e.key === ' ') { bullets.push({ x: ship.x + Math.cos(ship.angle) * 18, y: ship.y + Math.sin(ship.angle) * 18, vx: Math.cos(ship.angle) * 10, vy: Math.sin(ship.angle) * 10 }); } });
+      window.addEventListener('keyup', e => { if (e.key === 'ArrowLeft') keys.left = false; if (e.key === 'ArrowRight') keys.right = false; if (e.key === 'ArrowUp') keys.up = false; });
+      function frame() { update(); draw(); requestAnimationFrame(frame); }
+      frame();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pong</title>
+    <style>
+      body { margin: 0; background: #0a1320; color: white; display: grid; place-items: center; min-height: 100vh; font-family: Arial, sans-serif; }
+      canvas { background: #0f1d2d; border: 2px solid rgba(255,255,255,0.15); box-shadow: 0 18px 40px rgba(0,0,0,0.3); }
+    </style>
+  </head>
+  <body>
+    <canvas id="game" width="800" height="500"></canvas>
+    <script>
+      const canvas = document.getElementById('game');
+      const ctx = canvas.getContext('2d');
+      const paddle = { x: 20, y: 200, w: 14, h: 100, speed: 6 };
+      const ai = { x: canvas.width - 34, y: 200, w: 14, h: 100, speed: 4.5 };
+      const ball = { x: canvas.width / 2, y: canvas.height / 2, r: 10, vx: 5, vy: 3 };
+      let leftScore = 0, rightScore = 0;
+      const keys = { up: false, down: false };
+
+      function update() {
+        if (keys.up) paddle.y -= paddle.speed;
+        if (keys.down) paddle.y += paddle.speed;
+        paddle.y = Math.max(0, Math.min(canvas.height - paddle.h, paddle.y));
+
+        const target = ball.y - (ai.h / 2) + 6;
+        ai.y += (target - ai.y) * 0.12;
+        ai.y = Math.max(0, Math.min(canvas.height - ai.h, ai.y));
+
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        if (ball.y <= 0 || ball.y >= canvas.height) ball.vy *= -1;
+        if (ball.x <= paddle.x + paddle.w && ball.y >= paddle.y && ball.y <= paddle.y + paddle.h && ball.x >= paddle.x) {
+          ball.vx = Math.abs(ball.vx) + 0.2;
+          ball.vy += (ball.y - (paddle.y + paddle.h/2)) * 0.12;
+          ball.x = paddle.x + paddle.w + 1;
+        }
+        if (ball.x >= ai.x && ball.y >= ai.y && ball.y <= ai.y + ai.h && ball.x <= ai.x + ai.w) {
+          ball.vx = -Math.abs(ball.vx) - 0.2;
+          ball.vy += (ball.y - (ai.y + ai.h/2)) * 0.12;
+          ball.x = ai.x - 1;
+        }
+
+        if (ball.x < 0) { rightScore++; resetBall(); }
+        if (ball.x > canvas.width) { leftScore++; resetBall(); }
+      }
+
+      function resetBall() {
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        ball.vx = (Math.random() > 0.5 ? 1 : -1) * 5;
+        ball.vy = (Math.random() - 0.5) * 6;
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#0f1d2d';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.strokeStyle = '#dfe9ff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2, 0);
+        ctx.lineTo(canvas.width/2, canvas.height);
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffb703';
+        ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+        ctx.fillStyle = '#4cc9f0';
+        ctx.fillRect(ai.x, ai.y, ai.w, ai.h);
+        ctx.fillStyle = '#edf6ff';
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.font = 'bold 28px Arial';
+        ctx.fillText(String(leftScore), canvas.width * 0.42, 38);
+        ctx.fillText(String(rightScore), canvas.width * 0.56, 38);
+      }
+
+      function frame() {
+        update();
+        draw();
+        requestAnimationFrame(frame);
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowUp') keys.up = true;
+        if (e.key === 'ArrowDown') keys.down = true;
+      });
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowUp') keys.up = false;
+        if (e.key === 'ArrowDown') keys.down = false;
+      });
+
+      frame();
+    </script>
+  </body>
+</html>
